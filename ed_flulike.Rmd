@@ -1,0 +1,65 @@
+---
+title: "ED Flu Visits"
+author: "Adam Whalen"
+date: "11/20/2020"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(httr)
+library(rvest)
+```
+
+## Data Description
+
+This dataset contains information about emergency department visits and admissions for influenza-like illness and/or pneumonia in New York City. It was collected by the NYC Department of Health and Mental Hygiene and accessed via API from the NYC OpenData web platform. It contains syndromic data, meaning that it is not characterized by diagnostic testing and is inherently non-specific, but are more useful for tracking trends over time rather than exact measures of morbidity. A note: this dataset began in March 2020, so it is likely mainly used as a COVID-19 tracking tool, rather than actually for flu/pneumonia. That may affect our ability to use it for a dataset. 
+
+There are 4.2 million rows in the full dataset. Each extract_date repeats previously recorded entries; we should simply filter on the last extract date to get the most up to date data, and discard all others to avoid repeated entries.
+
+```{r eval = FALSE}
+ed_flu = 
+  GET("https://data.cityofnewyork.us/resource/2nwg-uqyg.csv",
+      query = list("$limit" = 4215249)) %>% 
+  content("parsed") 
+
+head(ed_flu)
+```
+
+```{r}
+ed_flu_tidy = 
+  ed_flu %>% 
+  mutate(
+    extract_date = as.Date(extract_date, format = "%m/%d/%Y"),
+    date = as.Date(date, format = "%m/%d/%Y"),
+    mod_zcta = as.factor(mod_zcta), 
+    pct_visits = ili_pne_visits / total_ed_visits,
+    pct_adm = ili_pne_admissions / ili_pne_visits
+  ) %>% 
+  filter(extract_date == "2020-11-19") %>% 
+  arrange(date, mod_zcta)
+```
+
+After importing the full dataset and then filtering to only the most recent extract date, we are left with a working dataset of almost 46,000 observations. I also calculated the percent of ED visits in each modified ZCTA that were influenza-like or pneumonias, as well as the proportion of those visits that became admissions, for each day. I then ordered by date and ZCTA for data readability.
+
+I guess, let's do a plot to look at the dataset!
+
+```{r}
+ed_flu_tidy %>% 
+  ggplot(aes(x = date, y = ili_pne_visits)) +
+  geom_point(alpha = 0.2)
+```
+
+Yeah, this is a lot of data points. Need to figure out how to manipulate it better tomorrow ehn I'm not tired. First, double check that the smaller dset is ok to save and push.
+
+```{r}
+object.size(ed_flu_tidy)
+```
+
+It's about 2.8 MB. Big, but definitely fine. Saving.
+
+```{r}
+write_csv(ed_flu_tidy, "./ed_flu_tidy.csv")
+```
+
+In light of not wanting to knit code that pulls 4 million observations again, I'm just going to save what I have so far and not knit. I have exported the usable dataset anyway, so we should be ok for now. I can knit again if I decide I need to.
