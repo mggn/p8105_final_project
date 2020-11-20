@@ -23,7 +23,7 @@ brfss_df =
   janitor::clean_names()
 
 head(brfss_df)
-names(brfss_df)
+
 
 ```
 per the environment and the code above, we can see that there are 418,268 observations and 342 variables. Upon first glance,
@@ -31,9 +31,10 @@ the names do not seem that intuitive, so we will have to refer to the codebook a
 
 Based, off of this codebook and our interest in vaccines, I will peruse the data and select:
 -a participant id  
--location: it would be great to focus on new york  
+-NATIONAL  
 -demographic variables
--variables pertaining to flu vaccine usage
+-variables pertaining to flu vaccine
+
 
 #### poking through the codebook and the clean names
 
