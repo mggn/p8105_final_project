@@ -19,7 +19,7 @@ First, we need to import the data using read_xpt
 ```{r data import}
 
 brfss_df =
-  read_xpt("./data/LLCP2019.xpt") %>%
+  read_xpt("./final_project_large_data/LLCP2019.xpt") %>%
   janitor::clean_names()
 
 head(brfss_df)
