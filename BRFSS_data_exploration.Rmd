@@ -1,0 +1,68 @@
+---
+title: "BRFSS data exploration"
+author: "Maria Guzman"
+date: "11/18/2020"
+output: github_document
+---
+
+### About BRFSS
+
+*"The Behavioral Risk Factor Surveillance System (BRFSS) is the nation’s premier system of health-related telephone surveys that collect state data about U.S. residents regarding their health-related risk behaviors, chronic health conditions, and use of preventive services. Established in 1984 with 15 states, BRFSS now collects data in all 50 states as well as the District of Columbia and three U.S. territories. BRFSS completes more than 400,000 adult interviews each year, making it the largest continuously conducted health survey system in the world."*
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(haven) #since this data is in xpt format
+```
+
+First, we need to import the data using read_xpt
+
+```{r data import}
+
+brfss_df =
+  read_xpt("./data/LLCP2019.xpt") %>%
+  janitor::clean_names()
+
+head(brfss_df)
+names(brfss_df)
+
+```
+per the environment and the code above, we can see that there are 418,268 observations and 342 variables. Upon first glance,
+the names do not seem that intuitive, so we will have to refer to the codebook at the following link: https://www.cdc.gov/brfss/annual_data/2019/pdf/codebook19_llcp-v2-508.HTML
+
+Based, off of this codebook and our interest in vaccines, I will peruse the data and select:
+-a participant id  
+-location: it would be great to focus on new york  
+-demographic variables
+-variables pertaining to flu vaccine usage
+
+#### poking through the codebook and the clean names
+
+These are the variables of interest; I will refine and clean tomorrow 11/19/2020
+
+"state"   
+"fmonth"  
+"idate"   
+"imonth"   "iday"     "iyear"    
+"seqno"    "psu" 
+"statere1"  "ladult1"  "colgsex"  "numadult" "landsex"  "nummen"   "numwomen" "respslct"
+"cadult1"  "cellsex"  "pvtresd3"  "cstate1"   "hhadult"  "sexvar"   "genhlth" 
+"physhlth" "menthlth" "poorhlth" "hlthpln1 = health insurance coverage"
+"persdoc2" 
+"medcost"  
+"checkup1" 
+"chcscncr" "chcocncr" "chccopd2" "addepev3" "chckdny2"
+"marital"  "educa"    "renthom1"
+"numhhol3" "numphon3" 
+ "veteran3" "employ1"  "children" "income2"  
+"weight2"  "pregnant"   
+ 
+ "flushot7" "flshtmy3" 
+"tetanus1" "pneuvac4" 
+
+ "foodstmp" "birthsex" "somale"   "sofemale" "trnsgndr" "rcsgendr" "rcsrltn2" "casthdx2"
+ "imprace" 
+"chispnc"  "crace1"   "cprace"   "cllcpwt"  
+
+"prace1"   "mrace1"   "hispanc"  "race"     "raceg21"  "racegr3"  "race_g1"  "sex"      "ageg5yr"  "age65yr"  "age80"   
+"age_g"    "htin4"    "htm4"     "wtkg3"    "bmi5"     "bmi5cat"  "rfbmi5"   "chldcnt"  "educag"   "incomg"   "smoker3" 
+
