@@ -201,7 +201,5 @@ usualpl_a = case_when(
 ```
 
 
-```{r}
 
-```
 
