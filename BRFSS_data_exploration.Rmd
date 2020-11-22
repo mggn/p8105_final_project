@@ -12,6 +12,7 @@ output: github_document
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(haven) #since this data is in xpt format
+library(plotly)
 ```
 
 First, we need to import the data using read_xpt
@@ -68,13 +69,15 @@ brfss_df %>%
                           '11' = "A school",
                           '77' = "Don't know/not sure",
                           '99' = "Refused")
-  )  %>% group_by(flu_vacc_loc) %>%
-  summarize(
-    
+  )%>% 
+  count(flu_vacc_loc)%>%
+  mutate(flu_vacc_loc = fct_reorder(flu_vacc_loc, n)) %>%
+    plot_ly(x = ~flu_vacc_loc, y = ~n, color = ~flu_vacc_loc, type = "bar", colors = "plasma") %>%
+  layout(
+    xaxis = list(title = "Flu vaccine location"),
+    yaxis = list(title = "Count (n)")
   )
-%>% 
-  ggplot(aes(x = flu_vacc_loc, y = n, group = flu_vacc_loc))+
-  geom_histogram()
+  
 
 
 
