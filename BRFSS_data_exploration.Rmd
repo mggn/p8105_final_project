@@ -13,6 +13,8 @@ output: github_document
 library(tidyverse)
 library(haven) #since this data is in xpt format
 library(plotly)
+library(viridis)
+
 ```
 
 First, we need to import the data using read_xpt
@@ -86,15 +88,22 @@ Ok finally here's a little plot of the counts of where people got the vaccine. H
 ```{r}
 plot_prototype =
   brfss_df %>%
-  select (state, flushot7) %>%
-  group_by(state, flushot7)%>%
+  mutate(
+    state = as.factor(state),
+    flushot_yn = as.factor(flushot7)
+  )%>%
+  drop_na(flushot_yn, state) %>%
+  select (state, flushot_yn) %>%
+  group_by(state, flushot_yn)%>%
   summarize(n_obs = n()) %>%
-  filter(state == c(1,2,3)) %>%
-  ggplot(aes(x = n_obs))+
-  geom_histogram(binwidth =2)+
-  facet_grid(~state)
+  ggplot(aes(fill = flushot_yn, y = n_obs, x = state))+
+  geom_bar(position="stack", stat = "identity")+
+  scale_fill_viridis(discrete = TRUE)+
+  theme_bw()
 
-  #this is so ugly I need to fix it lol
+  
+  #getting somewhere. For the plot above, think about splitting up states
+  #another plot: bar with response on x, count on y, facet_wrap by state
 
 ggplotly(plot_prototype)
 
