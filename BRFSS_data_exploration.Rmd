@@ -38,32 +38,9 @@ Based, off of this codebook and our interest in vaccines, I will peruse the data
 
 #### poking through the codebook and the clean names
 
-These are the variables of interest; I will refine and clean tomorrow 11/19/2020
-
-"state"   
-"fmonth"  
-"idate"   
-"imonth"   "iday"     "iyear"    
-"seqno"    "psu" 
-"statere1"  "ladult1"  "colgsex"  "numadult" "landsex"  "nummen"   "numwomen" "respslct"
-"cadult1"  "cellsex"  "pvtresd3"  "cstate1"   "hhadult"  "sexvar"   "genhlth" 
-"physhlth" "menthlth" "poorhlth" "hlthpln1 = health insurance coverage"
-"persdoc2" 
-"medcost"  
-"checkup1" 
-"chcscncr" "chcocncr" "chccopd2" "addepev3" "chckdny2"
-"marital"  "educa"    "renthom1"
-"numhhol3" "numphon3" 
- "veteran3" "employ1"  "children" "income2"  
-"weight2"  "pregnant"   
- 
- "flushot7" "flshtmy3" 
-"tetanus1" "pneuvac4" 
-
- "foodstmp" "birthsex" "somale"   "sofemale" "trnsgndr" "rcsgendr" "rcsrltn2" "casthdx2"
- "imprace" 
-"chispnc"  "crace1"   "cprace"   "cllcpwt"  
-
-"prace1"   "mrace1"   "hispanc"  "race"     "raceg21"  "racegr3"  "race_g1"  "sex"      "ageg5yr"  "age65yr"  "age80"   
-"age_g"    "htin4"    "htm4"     "wtkg3"    "bmi5"     "bmi5cat"  "rfbmi5"   "chldcnt"  "educag"   "incomg"   "smoker3" 
+Yesterday, I went through the codebook online and pulled the variables of interest. The purpose of creating this codebook,
+which is in the project file called "BRFSS_codebook_streamlined", is to (1) compare variables with Ronae's national survey,
+which seems to have a lot of overlap with this survey but may be more comprehensive. This comparison will lead us to (2) deciding
+which dataset to keep and how to split up the larger dataset, if necessary. Finally, before our meeting today I will (3) perform
+some preliminary data exploration and visualization now that I know which variables to select.
 
