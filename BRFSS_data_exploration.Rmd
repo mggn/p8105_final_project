@@ -45,6 +45,7 @@ some preliminary data exploration and visualization now that I know which variab
 
 ```{r data_streamline}
 
+ 
 brfss_df %>%
   select(seqno, state, sexvar, genhlth, physhlth, menthlth, hlthpln1, persdoc2, medcost, checkup1,
          flushot7, imfvpla1, urbstat) %>%
@@ -52,7 +53,28 @@ brfss_df %>%
     flu_vacc_loc = as.factor(imfvpla1)
   ) %>%
   drop_na(flu_vacc_loc) %>%
-  summarize(flu_vacc_loc)
+  mutate(
+    flu_vacc_loc = recode(flu_vacc_loc,
+                          '1' = "Doctor's office/HMO",
+                          '2' = "Health dept",
+                          '3' = "Clinic/health center",
+                          '4' = "Senior, rec, or community center",
+                          '5' = "Supermarket/pharmacy",
+                          '6' = "Hospital",
+                          '7' = "ER",
+                          '8' = "Workplace",
+                          '9' = "Elsewhere",
+                          '10' = "Canada/Mexico",
+                          '11' = "A school",
+                          '77' = "Don't know/not sure",
+                          '99' = "Refused")
+  )  %>% group_by(flu_vacc_loc) %>%
+  summarize(
+    
+  )
+%>% 
+  ggplot(aes(x = flu_vacc_loc, y = n, group = flu_vacc_loc))+
+  geom_histogram()
 
 
 
