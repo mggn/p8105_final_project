@@ -84,8 +84,19 @@ brfss_df %>%
 Ok finally here's a little plot of the counts of where people got the vaccine. How many people actually responded yes?
 
 ```{r}
-brfss_df %>%
+plot_prototype =
+  brfss_df %>%
   select (state, flushot7) %>%
   group_by(state, flushot7)%>%
+  summarize(n_obs = n()) %>%
+  filter(state == c(1,2,3)) %>%
+  ggplot(aes(x = n_obs))+
+  geom_histogram(binwidth =2)+
+  facet_grid(~state)
+
+  #this is so ugly I need to fix it lol
+
+ggplotly(plot_prototype)
+
   
 ```
