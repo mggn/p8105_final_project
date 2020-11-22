@@ -102,10 +102,24 @@ plot_prototype =
   theme_bw()
 
   
-  #getting somewhere. For the plot above, think about splitting up states
+  #getting somewhere. For the plot above, think about splitting up states. Also percentages are probably more meaningful
   #another plot: bar with response on x, count on y, facet_wrap by state
 
 ggplotly(plot_prototype)
 
   
+```
+
+#### I want to try and scrape data from twitter HA!
+
+```{r}
+library(rvest)
+library(httr)
+library(rtweet)
+
+url = "https://twitter.com/search?q=flu%20vaccines&src=typeahead_click"
+twitter_html = read_html(url)%>%
+  html_nodes(css = "table")
+
+
 ```
