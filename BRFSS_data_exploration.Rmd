@@ -103,7 +103,12 @@ plot_prototype =
 
   
   #getting somewhere. For the plot above, think about splitting up states. Also percentages are probably more meaningful
+  #dodge plot for readability
   #another plot: bar with response on x, count on y, facet_wrap by state
+  #marriage of qualitative and quantitative
+  #snapshot of right now
+  #when was flu vacc first available?
+
 
 ggplotly(plot_prototype)
 
@@ -116,6 +121,7 @@ ggplotly(plot_prototype)
 library(rvest)
 library(httr)
 library(rtweet)
+#look at twitr
 
 url = "https://twitter.com/search?q=flu%20vaccines&src=typeahead_click"
 twitter_html = read_html(url)%>%
