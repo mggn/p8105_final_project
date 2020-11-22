@@ -1,0 +1,65 @@
+---
+title: "Flu Vaccination Sites"
+author: "Adam Whalen"
+date: "11/20/2020"
+output: github_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(httr)
+library(rvest)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+
+scale_colour_discrete = scale_color_viridis_d
+scale_fill_discrete = scale_fill_viridis_d
+```
+
+## Data Description
+
+This data set contains information about the locations in NYC where individuals can get a flu shot.
+
+```{r}
+flu_vax = 
+  GET("https://data.cityofnewyork.us/resource/w9ei-idxz.csv") %>% 
+  content("parsed")
+
+view(flu_vax)
+object.size(flu_vax)
+```
+
+Tidy the set
+
+```{r}
+flu_vax_tidy = 
+  flu_vax %>% 
+  select(objectid, facility_name, walk_in, insurance, children, borough, zip_code, latitude, longitude) %>% 
+  mutate(borough = str_to_title(borough))
+```
+
+Graph it up
+
+```{r}
+vax_map = 
+  flu_vax_tidy %>% 
+  ggplot(aes(x = longitude, y = latitude, color = borough)) +
+  geom_point()
+
+vax_map
+```
+
+Rad.
+
+
