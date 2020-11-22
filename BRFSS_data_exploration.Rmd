@@ -24,7 +24,6 @@ brfss_df =
 
 head(brfss_df)
 
-
 ```
 per the environment and the code above, we can see that there are 418,268 observations and 342 variables. Upon first glance,
 the names do not seem that intuitive, so we will have to refer to the codebook at the following link: https://www.cdc.gov/brfss/annual_data/2019/pdf/codebook19_llcp-v2-508.HTML
@@ -44,3 +43,17 @@ which seems to have a lot of overlap with this survey but may be more comprehens
 which dataset to keep and how to split up the larger dataset, if necessary. Finally, before our meeting today I will (3) perform
 some preliminary data exploration and visualization now that I know which variables to select.
 
+```{r data_streamline}
+
+brfss_df %>%
+  select(seqno, state, sexvar, genhlth, physhlth, menthlth, hlthpln1, persdoc2, medcost, checkup1,
+         flushot7, imfvpla1, urbstat) %>%
+  mutate(
+    flu_vacc_loc = as.factor(imfvpla1)
+  ) %>%
+  drop_na(flu_vacc_loc) %>%
+  summarize(flu_vacc_loc)
+
+
+
+```
