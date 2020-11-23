@@ -23,71 +23,7 @@ First, we need to import the data using read_xpt
 
 brfss_df =
   read_xpt("./final_project_large_data/LLCP2019.xpt") %>%
-  janitor::clean_names()
-
-head(brfss_df)
-
-```
-per the environment and the code above, we can see that there are 418,268 observations and 342 variables. Upon first glance,
-the names do not seem that intuitive, so we will have to refer to the codebook at the following link: https://www.cdc.gov/brfss/annual_data/2019/pdf/codebook19_llcp-v2-508.HTML
-
-Based, off of this codebook and our interest in vaccines, I will peruse the data and select:
--a participant id  
--NATIONAL  
--demographic variables
--variables pertaining to flu vaccine
-
-
-#### poking through the codebook and the clean names
-
-Yesterday, I went through the codebook online and pulled the variables of interest. The purpose of creating this codebook,
-which is in the project file called "BRFSS_codebook_streamlined", is to (1) compare variables with Ronae's national survey,
-which seems to have a lot of overlap with this survey but may be more comprehensive. This comparison will lead us to (2) deciding
-which dataset to keep and how to split up the larger dataset, if necessary. Finally, before our meeting today I will (3) perform
-some preliminary data exploration and visualization now that I know which variables to select.
-
-```{r data_streamline}
-
- 
-brfss_df %>%
-  select(seqno, state, sexvar, genhlth, physhlth, menthlth, hlthpln1, persdoc2, medcost, checkup1,
-         flushot7, imfvpla1, urbstat) %>%
-  mutate(
-    flu_vacc_loc = as.factor(imfvpla1)
-  ) %>%
-  drop_na(flu_vacc_loc) %>%
-  mutate(
-    flu_vacc_loc = recode(flu_vacc_loc,
-                          '1' = "Doctor's office/HMO",
-                          '2' = "Health dept",
-                          '3' = "Clinic/health center",
-                          '4' = "Senior, rec, or community center",
-                          '5' = "Supermarket/pharmacy",
-                          '6' = "Hospital",
-                          '7' = "ER",
-                          '8' = "Workplace",
-                          '9' = "Elsewhere",
-                          '10' = "Canada/Mexico",
-                          '11' = "A school",
-                          '77' = "Don't know/not sure",
-                          '99' = "Refused"),
-  )%>% 
-  count(flu_vacc_loc)%>%
-  mutate(flu_vacc_loc = fct_reorder(flu_vacc_loc, n)) %>%
-    plot_ly(x = ~flu_vacc_loc, y = ~n, color = ~flu_vacc_loc, type = "bar", colors = "plasma") %>%
-  layout(
-    xaxis = list(title = "Flu vaccine location"),
-    yaxis = list(title = "Count (n)")
-  )
-  
-
-```
-
-Ok finally here's a little plot of the counts of where people got the vaccine. How many people actually responded yes?
-
-```{r}
-plot_prototype =
-  brfss_df %>%
+  janitor::clean_names()%>%
   mutate(
     state = as.factor(state),
     flushot_yn = as.factor(flushot7)
@@ -151,17 +87,94 @@ plot_prototype =
           "2" = "No",
           "7" = "Don't know/not sure",
           "9" = "refused")
+  )
+
+
+head(brfss_df)
+
+```
+per the environment and the code above, we can see that there are 418,268 observations and 342 variables. Upon first glance,
+the names do not seem that intuitive, so we will have to refer to the codebook at the following link: https://www.cdc.gov/brfss/annual_data/2019/pdf/codebook19_llcp-v2-508.HTML
+
+Based, off of this codebook and our interest in vaccines, I will peruse the data and select:
+-a participant id  
+-NATIONAL  
+-demographic variables
+-variables pertaining to flu vaccine
+
+
+#### poking through the codebook and the clean names
+
+Yesterday, I went through the codebook online and pulled the variables of interest. The purpose of creating this codebook,
+which is in the project file called "BRFSS_codebook_streamlined", is to (1) compare variables with Ronae's national survey,
+which seems to have a lot of overlap with this survey but may be more comprehensive. This comparison will lead us to (2) deciding
+which dataset to keep and how to split up the larger dataset, if necessary. Finally, before our meeting today I will (3) perform
+some preliminary data exploration and visualization now that I know which variables to select.
+
+```{r data_streamline}
+
+ 
+brfss_df %>%
+  select(seqno, state, sexvar, genhlth, physhlth, menthlth, hlthpln1, persdoc2, medcost, checkup1,
+         flushot7, imfvpla1, urbstat) %>%
+  mutate(
+    flu_vacc_loc = as.factor(imfvpla1)
+  ) %>%
+  drop_na(flu_vacc_loc) %>%
+  mutate(
+    flu_vacc_loc = recode(flu_vacc_loc,
+                          '1' = "Doctor's office/HMO",
+                          '2' = "Health dept",
+                          '3' = "Clinic/health center",
+                          '4' = "Senior, rec, or community center",
+                          '5' = "Supermarket/pharmacy",
+                          '6' = "Hospital",
+                          '7' = "ER",
+                          '8' = "Workplace",
+                          '9' = "Elsewhere",
+                          '10' = "Canada/Mexico",
+                          '11' = "A school",
+                          '77' = "Don't know/not sure",
+                          '99' = "Refused"),
+  )%>% 
+  count(flu_vacc_loc)%>%
+  mutate(flu_vacc_loc = fct_reorder(flu_vacc_loc, n)) %>%
+    plot_ly(x = ~flu_vacc_loc, y = ~n, color = ~flu_vacc_loc, type = "bar", colors = "plasma") %>%
+  layout(
+    xaxis = list(title = "Flu vaccine location"),
+    yaxis = list(title = "Count (n)")
+  )
+  
+
+```
+
+Ok finally here's a little plot of the counts of where people got the vaccine. How many people actually responded yes?
+
+```{r}
+
+#Alabama to Iowa
+plot_prototype =
+  brfss_df %>%
+  filter(
+    state == c("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
+               "Delaware","District of COlumbia", "Florida", "Georgia","Hawaii", "Idaho", "Illinois", "Indiana","Iowa")
   )%>%
-  filter(state == c("Alabama":"Connecticut"))%>%
   drop_na(flushot_yn, state) %>%
   select (state, flushot_yn) %>%
   group_by(state, flushot_yn)%>%
   summarize(n_obs = n()) %>%
-  ggplot(aes(fill = flushot_yn, y = n_obs, x = flushot_yn))+
+  mutate(
+    pct = n_obs/sum(n_obs)
+  )%>%
+  ggplot(aes(fill = flushot_yn, y = pct, x = flushot_yn))+
   geom_bar(position="dodge", stat = "identity")+
   scale_fill_viridis(discrete = TRUE)+
   facet_wrap(~state)+
-  theme_bw()
+  theme_bw()+
+  theme(axis.title.x=element_blank(),
+        axis.text.x=element_blank(),
+        axis.ticks.x=element_blank())
+  
 
   
   #getting somewhere. For the plot above, think about splitting up states. Also percentages are probably more meaningful
