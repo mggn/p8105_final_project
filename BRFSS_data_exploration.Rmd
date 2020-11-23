@@ -152,13 +152,14 @@ Ok finally here's a little plot of the counts of where people got the vaccine. H
 
 ```{r}
 
-#Alabama to Iowa
-plot_prototype =
+#Midwest
+plot_midwest =
   brfss_df %>%
-  #filter(
-    #state == c("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
-               #"Delaware","District of COlumbia", "Florida", "Georgia","Hawaii", "Idaho", "Illinois", "Indiana","Iowa")
- # )%>%
+  filter(
+    state == c("Illinois", "Indiana", "Iowa", "Kansas", "Michigan", "Minnesota",
+               "Missouri", "Nebraska", "North Dakota", "Ohio", "South Dakota",
+               "Wisconsin")
+    )%>%
   drop_na(flushot_yn, state) %>%
   select (state, flushot_yn) %>%
   group_by(state, flushot_yn)%>%
@@ -170,7 +171,6 @@ plot_prototype =
   filter(flushot_yn != "refused")%>%
   ggplot(aes(fill = flushot_yn, y = pct, x = state))+
   geom_bar(position="dodge", stat = "identity")+
-  scale_fill_viridis(discrete = TRUE)+
  # facet_wrap(~state)+
   theme_bw()
  # theme(axis.title.x=element_blank(),
@@ -178,13 +178,25 @@ plot_prototype =
    #     axis.ticks.x=element_blank())
   
 
-  
-  #getting somewhere. For the plot above, think about splitting up states. Also percentages are probably more meaningful
-  #dodge plot for readability
-  #another plot: bar with response on x, count on y, facet_wrap by state
-  #marriage of qualitative and quantitative
-  #snapshot of right now
-  #when was flu vacc first available?
+plot_northeast =
+ brfss_df %>%
+  filter(
+    state == c("Connecticut", "Delaware","Maine", "Massachusetts", "Maryland",
+               "New Hampshire", "New Jersey", "New York", "Pennsylvania",
+               "Rhode Island", "Vermont")
+    )%>%
+  drop_na(flushot_yn, state) %>%
+  select (state, flushot_yn) %>%
+  group_by(state, flushot_yn)%>%
+  summarize(n_obs = n()) %>%
+  mutate(
+    pct = n_obs/sum(n_obs)
+  )%>%
+  filter(flushot_yn != "Don't know/not sure")%>%
+  filter(flushot_yn != "refused")%>%
+  ggplot(aes(fill = flushot_yn, y = pct, x = state))+
+  geom_bar(position="dodge", stat = "identity")+
+  theme_bw()  
 
 
 ggplotly(plot_prototype)
