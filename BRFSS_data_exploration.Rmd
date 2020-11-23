@@ -70,7 +70,7 @@ brfss_df %>%
                           '10' = "Canada/Mexico",
                           '11' = "A school",
                           '77' = "Don't know/not sure",
-                          '99' = "Refused")
+                          '99' = "Refused"),
   )%>% 
   count(flu_vacc_loc)%>%
   mutate(flu_vacc_loc = fct_reorder(flu_vacc_loc, n)) %>%
@@ -92,13 +92,75 @@ plot_prototype =
     state = as.factor(state),
     flushot_yn = as.factor(flushot7)
   )%>%
+  mutate(
+    state = recode(state,
+         "1" = "Alabama",
+         "2" = "Alaska",
+         "4" = "Arizona",
+         "5" = "Arkansas",
+         "6" = "California",
+         "8" = "Colorado",
+         "9" = "Connecticut",
+         "10" = "Delaware",
+         "11" = "District of Columbia",
+         "12" = "Florida",
+         "13" = "Georgia",
+         "15" = "Hawaii",
+         "16" = "Idaho",
+         "17" = "Illinois",
+         "18" = "Indiana",
+         "19" = "Iowa",
+         "20" = "Kansas",
+         "21" = "Kentucky",
+         "22" = "Louisiana",
+         "23" = "Maine",
+         "24" = "Maryland",
+         "25" = "Massachusetts",
+         "26" = "Michigan",
+         "27" = "Minnesota",
+         "28" = "Mississippi",
+         "29" = "Missouri",
+         "30" = "Montana",
+         "31" = "Nebraska",
+         "32" = "Nevada",
+         "33" = "New Hampshire",
+         "35" = "New Mexico",
+         "36" = "New York",
+         "37" = "North Carolina",
+         "38" = "North Dakota",
+         "39" = "Ohio",
+         "40" = "Oklahoma",
+         "41" = "Oregon",
+         "42" = "Pennsylvania",
+         "44" = "Rhode Island",
+         "45" = "South Carolina",
+         "46" = "Sputh Dakota",
+         "47" = "Tennessee",
+         "48" = "Texas",
+         "49" = "Utah",
+         "50" = "Vermont",
+         "51" = "Virginia",
+         "53" = "Washington",
+         "54" = "West Virginia",
+         "55" = "Wisconsin",
+         "56" = "Wyoming",
+         "66" = "Guam",
+         "72" = "Puerto Rico"),
+    flushot_yn = recode(flushot_yn,
+          "1" = "Yes",
+          "2" = "No",
+          "7" = "Don't know/not sure",
+          "9" = "refused")
+  )%>%
+  filter(state == c("Alabama":"Connecticut"))%>%
   drop_na(flushot_yn, state) %>%
   select (state, flushot_yn) %>%
   group_by(state, flushot_yn)%>%
   summarize(n_obs = n()) %>%
-  ggplot(aes(fill = flushot_yn, y = n_obs, x = state))+
-  geom_bar(position="stack", stat = "identity")+
+  ggplot(aes(fill = flushot_yn, y = n_obs, x = flushot_yn))+
+  geom_bar(position="dodge", stat = "identity")+
   scale_fill_viridis(discrete = TRUE)+
+  facet_wrap(~state)+
   theme_bw()
 
   
