@@ -86,11 +86,11 @@ brfss_df =
           "1" = "Yes",
           "2" = "No",
           "7" = "Don't know/not sure",
-          "9" = "refused")
+          "9" = "Refused")
   )
 
 
-head(brfss_df)
+#head(brfss_df)
 
 ```
 per the environment and the code above, we can see that there are 418,268 observations and 342 variables. Upon first glance,
