@@ -155,10 +155,10 @@ Ok finally here's a little plot of the counts of where people got the vaccine. H
 #Alabama to Iowa
 plot_prototype =
   brfss_df %>%
-  filter(
-    state == c("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
-               "Delaware","District of COlumbia", "Florida", "Georgia","Hawaii", "Idaho", "Illinois", "Indiana","Iowa")
-  )%>%
+  #filter(
+    #state == c("Alabama", "Alaska", "Arizona", "Arkansas", "California", "Colorado", "Connecticut",
+               #"Delaware","District of COlumbia", "Florida", "Georgia","Hawaii", "Idaho", "Illinois", "Indiana","Iowa")
+ # )%>%
   drop_na(flushot_yn, state) %>%
   select (state, flushot_yn) %>%
   group_by(state, flushot_yn)%>%
@@ -166,14 +166,16 @@ plot_prototype =
   mutate(
     pct = n_obs/sum(n_obs)
   )%>%
-  ggplot(aes(fill = flushot_yn, y = pct, x = flushot_yn))+
+  filter(flushot_yn != "Don't know/not sure")%>%
+  filter(flushot_yn != "refused")%>%
+  ggplot(aes(fill = flushot_yn, y = pct, x = state))+
   geom_bar(position="dodge", stat = "identity")+
   scale_fill_viridis(discrete = TRUE)+
-  facet_wrap(~state)+
-  theme_bw()+
-  theme(axis.title.x=element_blank(),
-        axis.text.x=element_blank(),
-        axis.ticks.x=element_blank())
+ # facet_wrap(~state)+
+  theme_bw()
+ # theme(axis.title.x=element_blank(),
+  #      axis.text.x=element_blank(),
+   #     axis.ticks.x=element_blank())
   
 
   
