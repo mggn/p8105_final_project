@@ -151,6 +151,7 @@ brfss_df %>%
 Ok finally here's a little plot of the counts of where people got the vaccine. How many people actually responded yes?
 
 ```{r}
+library(wesanderson)
 
 #Midwest
 plot_midwest =
@@ -171,11 +172,18 @@ plot_midwest =
   filter(flushot_yn != "refused")%>%
   ggplot(aes(fill = flushot_yn, y = pct, x = state))+
   geom_bar(position="dodge", stat = "identity")+
- # facet_wrap(~state)+
-  theme_bw()
- # theme(axis.title.x=element_blank(),
-  #      axis.text.x=element_blank(),
-   #     axis.ticks.x=element_blank())
+  ylim(0, 1.0)+
+  theme_bw()+
+  labs(
+    x = "State",
+    y = "% Response",
+    title = "Frequency of flu vaccinations in the Midwestern region of the U.S"
+  )+
+  scale_fill_discrete(name = "Response")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 1))
+ 
+ggplotly(plot_midwest) 
+ 
 
 ```
 
@@ -200,7 +208,17 @@ plot_northeast =
   filter(flushot_yn != "refused")%>%
   ggplot(aes(fill = flushot_yn, y = pct, x = state))+
   geom_bar(position="dodge", stat = "identity")+
-  theme_bw()  
+  ylim(0, 1.0)+
+  theme_bw()+
+  labs(
+    x = "State",
+    y = "% Response",
+    title = "Frequency of flu vaccinations in the Northeastern region of the U.S."
+  )+
+  scale_fill_discrete(name = "Response")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 1)) 
+
+ggplotly(plot_northeast)
 
   
 ```
@@ -225,7 +243,17 @@ plot_west =
   filter(flushot_yn != "refused")%>%
   ggplot(aes(fill = flushot_yn, y = pct, x = state))+
   geom_bar(position="dodge", stat = "identity")+
-  theme_bw()
+  ylim(0, 1.0)+
+  theme_bw()+
+  labs(
+    x = "State",
+    y = "% Response",
+    title = "Frequency of flu vaccinations in the Western region of the U.S."
+  )+
+  scale_fill_discrete(name = "Response")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 1))
+
+ggplotly(plot_west)
 
 ```
 
@@ -248,7 +276,18 @@ plot_south =
   filter(flushot_yn != "refused")%>%
   ggplot(aes(fill = flushot_yn, y = pct, x = state))+
   geom_bar(position="dodge", stat = "identity")+
-  theme_bw()
+  ylim(0, 1.0)+
+  theme_bw()+
+  labs(
+    x = "State",
+    y = "% Response",
+    title = "Frequency of flu vaccinations in the Southern region of the U.S."
+  )+
+  scale_fill_discrete(name = "Response")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 1))
+
+ggplotly(plot_south)
+
 ```
 
 
