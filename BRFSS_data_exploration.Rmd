@@ -290,6 +290,23 @@ ggplotly(plot_south)
 
 ```
 
+#### Will try to iterate over datasets from 2015 to now and see if I can plot a trend
+hopefully the code will be similar to what we did in the last homework
+
+```{r}
+goal_trend = 
+list.files(path = "./final_project_large_data", full.names=FALSE)%>%
+  tibble::enframe(name = NULL)
+
+```
+```{r}
+goal_trend_df =
+  goal_trend %>%
+  mutate(
+    data = map(value, ~read_xpt(str_c("./final_project_large_data/", .x)))
+  )
+
+```
 
 #### I want to try and scrape data from twitter HA!
 
