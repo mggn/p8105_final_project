@@ -299,12 +299,16 @@ list.files(path = "./final_project_large_data", full.names=FALSE)%>%
   tibble::enframe(name = NULL)
 
 ```
+
+Data too large :-(
 ```{r}
-goal_trend_df =
-  goal_trend %>%
-  mutate(
-    data = map(value, ~read_xpt(str_c("./final_project_large_data/", .x)))
-  )
+# goal_trend_df =
+#   goal_trend %>%
+#   mutate(
+#     data = map(value, ~read_xpt(str_c("./final_project_large_data/", .x)))
+#   )%>%
+#   unnest(cols = data)%>%
+#   separate(value, into=c("survey", "year"))
 
 ```
 
@@ -314,11 +318,17 @@ goal_trend_df =
 library(rvest)
 library(httr)
 library(rtweet)
+library(httpuv)
 #look at twitr
 
 url = "https://twitter.com/search?q=flu%20vaccines&src=typeahead_click"
 twitter_html = read_html(url)%>%
   html_nodes(css = "table")
 
+tweets <- search_tweets(q = "#Vaccine", 
+                        n = 18000,
+                        include_rts = FALSE,
+                        `-filter` = "replies",
+                        lang = "en")
 
 ```
