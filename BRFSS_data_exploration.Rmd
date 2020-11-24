@@ -70,7 +70,7 @@ brfss_df =
          "42" = "Pennsylvania",
          "44" = "Rhode Island",
          "45" = "South Carolina",
-         "46" = "Sputh Dakota",
+         "46" = "South Dakota",
          "47" = "Tennessee",
          "48" = "Texas",
          "49" = "Utah",
@@ -176,12 +176,16 @@ plot_midwest =
  # theme(axis.title.x=element_blank(),
   #      axis.text.x=element_blank(),
    #     axis.ticks.x=element_blank())
-  
+
+```
+
+
+```{r}
 
 plot_northeast =
  brfss_df %>%
   filter(
-    state == c("Connecticut", "Delaware","Maine", "Massachusetts", "Maryland",
+    state == c("Connecticut","District of Columbia", "Delaware","Maine", "Massachusetts", "Maryland",
                "New Hampshire", "New Jersey", "New York", "Pennsylvania",
                "Rhode Island", "Vermont")
     )%>%
@@ -198,11 +202,55 @@ plot_northeast =
   geom_bar(position="dodge", stat = "identity")+
   theme_bw()  
 
-
-ggplotly(plot_prototype)
-
   
 ```
+
+
+```{r}
+plot_west =
+ brfss_df %>%
+  filter(
+    state == c("Alaska", "Arizona", "California", "Colorado","Hawaii", "Idaho", "Montana",
+               "Nevada", "New Mexico", "Oregon", "Utah", "Washington",
+               "Wyoming")
+    )%>%
+  drop_na(flushot_yn, state) %>%
+  select (state, flushot_yn) %>%
+  group_by(state, flushot_yn)%>%
+  summarize(n_obs = n()) %>%
+  mutate(
+    pct = n_obs/sum(n_obs)
+  )%>%
+  filter(flushot_yn != "Don't know/not sure")%>%
+  filter(flushot_yn != "refused")%>%
+  ggplot(aes(fill = flushot_yn, y = pct, x = state))+
+  geom_bar(position="dodge", stat = "identity")+
+  theme_bw()
+
+```
+
+```{r}
+plot_south =
+ brfss_df %>%
+  filter(
+    state == c("Alabama","Arkansas", "Florida", "Kentucky", "Louisiana", 
+               "Mississippi", "North Carolina", "Oklahoma", "South Carolina",
+               "Tennessee", "Texas", "Virginia", "West Virginia")
+    )%>%
+  drop_na(flushot_yn, state) %>%
+  select (state, flushot_yn) %>%
+  group_by(state, flushot_yn)%>%
+  summarize(n_obs = n()) %>%
+  mutate(
+    pct = n_obs/sum(n_obs)
+  )%>%
+  filter(flushot_yn != "Don't know/not sure")%>%
+  filter(flushot_yn != "refused")%>%
+  ggplot(aes(fill = flushot_yn, y = pct, x = state))+
+  geom_bar(position="dodge", stat = "identity")+
+  theme_bw()
+```
+
 
 #### I want to try and scrape data from twitter HA!
 
