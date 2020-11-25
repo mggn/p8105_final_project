@@ -54,7 +54,7 @@ flu_adult_df =
       
       sex_a = case_when(
       sex_a == "1" ~ "Male",
-      sex_a == "1" ~ "Female",
+      sex_a == "2" ~ "Female",
       sex_a == "7" ~ "No response",
       sex_a == "8" ~ "Not applicable",
       sex_a == "9" ~ "Don't know"),
@@ -203,3 +203,40 @@ usualpl_a = case_when(
 
 
 
+plots bebe
+
+wow that's alot of people who haven't gotten a flu shot
+
+```{r}
+
+flu_adult_df %>% 
+  ggplot(aes( x = shtflu12m_a)) + geom_bar() + facet_grid(.~bmicat_a)
+  
+
+```
+
+let's compare 
+
+just realized i didn't import any continous variables
+
+```{r}
+flu_adult_df %>% 
+  ggplot(aes(x = bmicat_a, y = shtflu12m_a, color = sex_a, alpha = .05)) + geom_jitter()
+```
+
+Seems like more men don't get a flu shot
+
+wow this looks terrible
+```{r}
+flu_adult_df %>% 
+  ggplot(aes(x = agep_a, y = shtflu12m_a)) + geom_area()
+```
+
+can make this interactive, then add different levels with other variables
+The entire page can be the background information/demographics of the respondents
+```{r}
+flu_adult_df %>% 
+  ggplot(aes(y = agep_a, x = shtflu12m_a)) + geom_violin()
+```
+
+im curious about the Nos and the Yes
