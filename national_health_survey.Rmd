@@ -46,10 +46,10 @@ flu_adult_df =
   adult_df %>% 
   janitor::clean_names() %>% 
   select(
-    srvy_yr,agep_a, age65, sex_a, educ_a,hisp_a, hispallp_a, hisdetp_a,phstat_a,bmicat_a, notcov_a, cover_a, usualpl_a, usplkind_a,  pregfluyr_a, shtflu12m_a, shtflum_a, shtfluy_a, flupreg2_a, raceallp_a, pregnow_a, disab3_a, socerrnds_a, cover65_a, lastdr_a, emerg12mtc_a, urgnt12mtc_a, natusborn_a,citznstp_a, povrattc_a, pregnow_a, paybll12m_a, wtfa_a
+    srvy_yr,agep_a, age65, sex_a, educ_a,hisp_a, hispallp_a, hisdetp_a,phstat_a,bmicat_a, notcov_a, cover_a, usualpl_a, usplkind_a,  pregfluyr_a, shtflu12m_a, shtflum_a, shtfluy_a, flupreg2_a, raceallp_a, pregnow_a, disab3_a, socerrnds_a, cover65_a, lastdr_a, emerg12mtc_a, urgnt12mtc_a, natusborn_a,citznstp_a, povrattc_a, pregnow_a, paybll12m_a, hhx
   ) %>% 
   mutate(
-    weight = wtfa_a, 
+   id = hhx,  
     age =  as.factor(agep_a), 
       age65 = case_when(
       age65 == "1" ~ "Less than 65",
@@ -318,7 +318,7 @@ flu_adult_df %>%
 flu_adult_df = 
   flu_adult_df %>% 
   select(
-    -hispallp_a, -hisdetp_a, -citznstp_a, -povrattc_a, -raceallp_a, -usualpl_a, -notcov_a, -wtfa_a
+    -hispallp_a, -hisdetp_a, -citznstp_a, -povrattc_a, -raceallp_a, -usualpl_a, -notcov_a, -hhx
   )
 ```
 
@@ -330,7 +330,8 @@ flu_adult_df =
     sex = as.factor(sex),
     nh_race = as.factor(nh_race),
     health = as.factor(health),
-    bmi = as.factor(bmi)
+    bmi = as.factor(bmi),
+    age = as.numeric(age)
   )
 ```
 
@@ -354,9 +355,11 @@ plots bebe
 
 # basic demographics
 
-## Looking at biological sex
+## Looking at biological sex (1)
 
 Starting off we can see that females are more likely to get a flu shot than not, this does not appear to be the same trend with men.  Men are more likely to not receive a flu shot than to get one. 
+
+**looks okay**
 ```{r}
 
 flu_adult_df %>% 
@@ -364,26 +367,30 @@ flu_adult_df %>%
   filter(flu_shot != "not applicable") %>% 
   filter(flu_shot != "don't know") %>% 
   filter(sex != "No response") %>% 
-  ggplot(aes( x = flu_shot, fill = sex)) + geom_bar() + facet_grid(.~ sex) + scale_fill_manual(values = wes_palette("GrandBudapest2"))
+  ggplot(aes( x = flu_shot, fill = sex)) + geom_bar(position = "dodge")  + scale_fill_manual(values = wes_palette("GrandBudapest2"))
 ```
 
 
-let's look at the months when shot are most likely to happen, and who are most likely to get shots during this time.
+## who's most at risk? let's think about vulnerable groups (2)
 
-for those who have flu shot under 65. 
+We know that the most vulnerable groups are those that are older and who  have a BMI that is not consider healthy. Let's consider those who did not receive a flu shot vs those who did. 
 
-not excited by this plot
+
+**factor reorder**
+
 ```{r}
 flu_adult_df %>% 
- filter(flu_shot_month != "No response") %>% 
-  filter(flu_shot_month != "Not applicable") %>% 
-  filter(flu_shot_month != "Don't know") %>% 
-  plot_ly(x = ~education, y = ~health, type = "bar", mode = "markers", color = ~coverage) 
-
+  filter(flu_shot != "not applicable") %>%
+  filter(flu_shot != "don't know") %>%
+  filter(flu_shot != "no response") %>%
+ filter(age > 65) %>%
+  filter(bmi != "unknown") %>% 
+  ggplot(aes(x = bmi, fill = flu_shot )) + geom_bar(position = "dodge")  + scale_fill_manual(values = wes_palette("GrandBudapest2"))
+ 
 ```
 
 
-## when are flu shots occurring? and insurance type
+## when are flu shots occurring? and insurance type (3)
 
 Let's look at insurance in relation to flu shots. Most of those receiving a flu shot are covered under private insurance.  Shots typically occur in October, with November close behind.  
 
@@ -398,7 +405,7 @@ flu_adult_df %>%
   ggplot(aes(x = coverage, y = flu_shot_month, color = coverage, alpha = .04)) + geom_jitter() + scale_fill_manual(values = wes_palette("GrandBudapest2"))
 ```
 
-## money and bills
+## money and bills (4)
 
 for those who didn't receive a flu shot, most respondents did not have difficulty paying their hospital bill.  
 
@@ -414,59 +421,101 @@ flu_adult_df %>%
 
 ```
 
-## Race and shots
 
-Age distribution for not getting a shot
-```{r}
-flu_adult_df %>% 
-  filter(flu_shot == "no") %>% 
-plot_ly(y = ~age, color = ~nh_race, type = "box", colors = "viridis") 
-```
-
-## Age distribution for getting a shot based on education
+## Age distribution for getting a shot based on education (5)
 
 **factor reorder babes**
 
 ```{r}
 flu_adult_df %>% 
   filter(flu_shot == "yes") %>% 
+  filter(age > 17) %>% 
 plot_ly(y = ~age, color = ~education, type = "box", colors = "viridis") 
 ```
 
 Seems like people are generally older when they receive a flu vaccine. 
 
 
-## plot for pregnant people and flu shots
+## plot for pregnant people and flu shots (6/7)
+
+**looks okay**
+How many people are pregnant? and if they are, did they receive a flu shot at all during that year? What factors contribute to women deciding to receive a flu shot?
 
 ```{r}
+flu_adult_df %>%
+  filter(pregnant == "yes") %>% 
+  filter(flu_shot != "not applicable") %>% 
+  ggplot(aes(x = coverage, fill = flu_shot)) + geom_bar(position = "dodge") + scale_fill_manual(values = wes_palette("GrandBudapest2"))
+```
 
+The majority of those who are pregnant receive their flu shot after pregnancy. This makes sense considering restricting of who can receive the vaccination.  
+
+**need to reorder**
+```{r}
+flu_adult_df %>% 
+   filter(flushot_preg != "NA") %>% 
+  filter(flushot_preg != "no response") %>%
+  filter(flushot_preg != "don't know") %>%
+  ggplot(aes(x = flushot_preg, fill = flushot_preg, alpha = .5)) + geom_density()  + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + scale_fill_manual(values = wes_palette("GrandBudapest2"))
 ```
 
 
-## plot for emergency care and urgent care visits
+## plot for emergency care and urgent care visits (8)
+
+emergency care
+```{r}
+flu_adult_df %>% 
+    filter(flu_shot != "not applicable") %>%
+  filter(flu_shot != "don't know") %>%
+  filter(flu_shot != "no response") %>%
+  filter(emergency_visits != "don't know") %>%
+  filter(emergency_visits != "not applicable") %>%
+  filter(emergency_visits != "refused") %>%
+  ggplot(aes(x = emergency_visits,  fill = flu_shot)) + geom_bar(position = "dodge") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
 
 ```{r}
 flu_adult_df %>% 
-  ggplot(aes(x = emergency_visits, y = age)) + geom_density() + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+    filter(flu_shot != "not applicable") %>%
+  filter(flu_shot != "don't know") %>%
+  filter(flu_shot != "no response") %>%
+  filter(urgentcare_visits != "don't know") %>%
+  filter(urgentcare_visits != "not applicable") %>%
+  filter(urgentcare_visits != "refused") %>%
+  ggplot(aes(x = urgentcare_visits,  fill = flu_shot)) + geom_bar(position = "dodge") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
 
+## general health, separted on race (9)
 
-## hispanic
+when we look at covid rates, we notice that black and brown communities are disproportionately affected by infection.  Let's look at this for Hispanic groups in regards to flu and health
 
-when we look at covid rates, we notice that black and brown communities are disporitionaitely affected by infection.  Let's look at this for Hispanice groups in regards to flu and health
+**factor reorder hunny** 
+```{r}
+flu_adult_df %>% 
+  filter(health != "no response") %>% 
+  filter(health != "Don't know") %>% 
+   filter(flu_shot != "no response") %>% 
+  filter(flu_shot != "not applicable") %>% 
+  filter(flu_shot != "don't know") %>% 
+  ggplot(aes(x = health, fill = flu_shot)) + geom_density(alpha = .4, adjust = .5) + facet_grid(nh_race ~ .)
+```
+
+
+## disabilitiies babes (10)
+
+**factor reorder for both variables**
+
+for those with a disability, who got a flu shot? and where are they going for their services? how much difficulty are they having with completing errands on their own?
 
 ```{r}
-
+flu_adult_df %>% 
+  filter(disability == "yes") %>% 
+  filter(flu_shot != "don't know") %>% 
+  filter(flu_shot != "no response") %>% 
+  filter(flu_shot != "not applicable") %>% 
+  filter(errands_alone_diff != "no response") %>% 
+  filter(errands_alone_diff != "don't know") %>%
+  ggplot(aes(x = errands_alone_diff, fill = flu_shot)) + geom_bar(position = "dodge")  + scale_fill_manual(values = wes_palette("BottleRocket1")) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
-
-## general health and BMI
-
-```{r}
-
-```
-
-
-## disabilitiies babes
-
 
