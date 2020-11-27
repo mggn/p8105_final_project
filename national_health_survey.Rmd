@@ -15,6 +15,9 @@ library(plotly)
 library(wesanderson)
 library(gganimate)
 library(gifski)
+library(transformr)
+library(magick)
+library(png)
 ```
 
 not really sure what this data set contains. need to look into this more
@@ -165,12 +168,12 @@ flu_adult_df =
   shtflu12m_a == "9" ~ "don't know"),
   
     flu_shot_month = case_when(
-      shtflum_a == "1" ~ "January ",
+      shtflum_a == "1" ~ "January",
       shtflum_a == "2" ~ "February",
       shtflum_a == "3" ~ "March",
       shtflum_a == "4" ~ "April",
       shtflum_a == "5" ~ "May",
-      shtflum_a == "6" ~ "June ",
+      shtflum_a == "6" ~ "June",
       shtflum_a == "7" ~ "July",
       shtflum_a == "8" ~ "August",
       shtflum_a == "9" ~ "September",
@@ -351,6 +354,46 @@ colors
 buda <- wes_palette("GrandBudapest2", 21, type = "continuous")
 ```
 
+```{r}
+flu_adult_df = 
+flu_adult_df %>% 
+   mutate(
+    bmi = fct_relevel(bmi, "underweight", "healthy weight", "overweight", "obese"),
+    
+    flu_shot_month = fct_relevel(flu_shot_month,"January","February","March","April","May","June","July","August","September","October","November","December"),
+    
+    last_drvisit = fct_relevel(last_drvisit,"within past year","within last 2 years","within last 3 years","within last 5 years","within last 10 years","10+ years", "never"),
+    
+    education = fct_relevel(education,
+      "never attended",
+       "Grades 1-11",
+       "12th grade, no dipolma",
+       "GED",
+       "HS graduate",
+      "College, no degree",
+      "Associate degree-tech",
+       "Associate degree-aca",
+      "Bachelor's degree",
+       "Master's degree",
+      "Professional school",
+       "Doctoral degree"),
+    
+    flushot_preg = fct_relevel(flushot_preg, "before pregnancy", "during pregnancy", "after pregnancy"),
+    
+    emergency_visits = fct_relevel(emergency_visits,
+                                  "never","once","twice","thrice","4+ times"),
+    
+    urgentcare_visits = fct_relevel(urgentcare_visits,
+                                   "never","once","twice","thrice","4 times","5+ times"),
+    
+    health = fct_relevel(health, "poor", "fair", "good", "very good", "excellent"),
+    
+    errands_alone_diff = fct_relevel(errands_alone_diff, "none", "some", "a lot", "cannot do at all")
+    
+    )
+ 
+```
+
 plots bebe
 
 # basic demographics
@@ -367,6 +410,7 @@ flu_adult_df %>%
   filter(flu_shot != "not applicable") %>% 
   filter(flu_shot != "don't know") %>% 
   filter(sex != "No response") %>% 
+  mutate(flu_shot = fct_infreq(flu_shot)) %>% 
   ggplot(aes( x = flu_shot, fill = sex)) + geom_bar(position = "dodge")  + scale_fill_manual(values = wes_palette("GrandBudapest2"))
 ```
 
@@ -375,8 +419,8 @@ flu_adult_df %>%
 
 We know that the most vulnerable groups are those that are older and who  have a BMI that is not consider healthy. Let's consider those who did not receive a flu shot vs those who did. 
 
+**look good**
 
-**factor reorder**
 
 ```{r}
 flu_adult_df %>% 
@@ -385,7 +429,7 @@ flu_adult_df %>%
   filter(flu_shot != "no response") %>%
  filter(age > 65) %>%
   filter(bmi != "unknown") %>% 
-  ggplot(aes(x = bmi, fill = flu_shot )) + geom_bar(position = "dodge")  + scale_fill_manual(values = wes_palette("GrandBudapest2"))
+  ggplot(aes(x = bmi, fill = flu_shot )) + geom_bar(position = "dodge")  + scale_fill_manual(values = wes_palette("GrandBudapest2")) 
  
 ```
 
@@ -394,7 +438,7 @@ flu_adult_df %>%
 
 Let's look at insurance in relation to flu shots. Most of those receiving a flu shot are covered under private insurance.  Shots typically occur in October, with November close behind.  
 
-**factor reorder by time of months**
+**looks good**
 ```{r}
 flu_adult_df %>% 
   filter(flu_shot_month != "No response") %>% 
@@ -402,14 +446,15 @@ flu_adult_df %>%
   filter(flu_shot_month != "Don't know") %>% 
   filter(coverage != "don't know") %>%
   filter(coverage != "NA") %>% 
-  ggplot(aes(x = coverage, y = flu_shot_month, color = coverage, alpha = .04)) + geom_jitter() + scale_fill_manual(values = wes_palette("GrandBudapest2"))
+  mutate(coverage = fct_infreq(coverage)) %>% 
+  ggplot(aes(y = coverage, x = flu_shot_month, color = coverage, alpha = .04)) + geom_jitter() + scale_fill_manual(values = wes_palette("GrandBudapest2")) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) 
 ```
 
 ## money and bills (4)
 
 for those who didn't receive a flu shot, most respondents did not have difficulty paying their hospital bill.  
 
-**factor reorder here babes**
+**looks good**
 ```{r}
 flu_adult_df %>% 
    filter(flu_shot == "no") %>%
@@ -424,7 +469,7 @@ flu_adult_df %>%
 
 ## Age distribution for getting a shot based on education (5)
 
-**factor reorder babes**
+**looks okay**
 
 ```{r}
 flu_adult_df %>% 
@@ -445,12 +490,13 @@ How many people are pregnant? and if they are, did they receive a flu shot at al
 flu_adult_df %>%
   filter(pregnant == "yes") %>% 
   filter(flu_shot != "not applicable") %>% 
+  mutate(coverage = fct_infreq(coverage)) %>% 
   ggplot(aes(x = coverage, fill = flu_shot)) + geom_bar(position = "dodge") + scale_fill_manual(values = wes_palette("GrandBudapest2"))
 ```
 
 The majority of those who are pregnant receive their flu shot after pregnancy. This makes sense considering restricting of who can receive the vaccination.  
 
-**need to reorder**
+**looks okay**
 ```{r}
 flu_adult_df %>% 
    filter(flushot_preg != "NA") %>% 
@@ -460,9 +506,11 @@ flu_adult_df %>%
 ```
 
 
-## plot for emergency care and urgent care visits (8)
+## plot for emergency care and urgent care visits (8/9)
 
 emergency care
+
+**looks okay**
 ```{r}
 flu_adult_df %>% 
     filter(flu_shot != "not applicable") %>%
@@ -474,6 +522,9 @@ flu_adult_df %>%
   ggplot(aes(x = emergency_visits,  fill = flu_shot)) + geom_bar(position = "dodge") + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
 ```
 
+urgent care
+
+**looks good**
 ```{r}
 flu_adult_df %>% 
     filter(flu_shot != "not applicable") %>%
@@ -486,11 +537,11 @@ flu_adult_df %>%
 ```
 
 
-## general health, separted on race (9)
+## general health, separted on race (10)
 
 when we look at covid rates, we notice that black and brown communities are disproportionately affected by infection.  Let's look at this for Hispanic groups in regards to flu and health
 
-**factor reorder hunny** 
+**want to make this more readable** 
 ```{r}
 flu_adult_df %>% 
   filter(health != "no response") %>% 
@@ -502,7 +553,7 @@ flu_adult_df %>%
 ```
 
 
-## disabilitiies babes (10)
+## disabilitiies babes (11)
 
 **factor reorder for both variables**
 
@@ -517,5 +568,59 @@ flu_adult_df %>%
   filter(errands_alone_diff != "no response") %>% 
   filter(errands_alone_diff != "don't know") %>%
   ggplot(aes(x = errands_alone_diff, fill = flu_shot)) + geom_bar(position = "dodge")  + scale_fill_manual(values = wes_palette("BottleRocket1")) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))
+```
+
+
+## let's try some transitions
+
+
+
+### not bad 
+```{r}
+flu_adult_df %>% 
+  filter(disability == "yes") %>% 
+  filter(flu_shot != "don't know") %>% 
+  filter(flu_shot != "no response") %>% 
+  filter(flu_shot != "not applicable") %>% 
+  filter(errands_alone_diff != "no response") %>% 
+  filter(errands_alone_diff != "don't know") %>%
+  ggplot(aes(x = errands_alone_diff, fill = flu_shot)) + geom_bar(position = "dodge")  + scale_fill_manual(values = wes_palette("BottleRocket1")) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + transition_states(
+    flu_shot,transition_length = 2, state_length = 5) + enter_grow() + exit_shrink() + ease_aes('sine-in-out')
+```
+
+
+```{r}
+flu_adult_df %>% 
+  filter(flu_shot != "no response") %>% 
+  filter(flu_shot != "not applicable") %>% 
+  filter(flu_shot != "don't know") %>% 
+  filter(sex != "No response") %>% 
+  ggplot(aes( x = sex, fill = flu_shot)) + geom_bar(position = "dodge")  + scale_fill_manual(values = wes_palette("GrandBudapest2")) + transition_states(
+   flu_shot,transition_length = 2, state_length = 5) + enter_grow() + exit_shrink() + ease_aes('sine-in-out')
+```
+
+\
+```{r}
+flu_adult_df %>% 
+  filter(flu_shot_month != "No response") %>% 
+  filter(flu_shot_month != "Not applicable") %>% 
+  filter(flu_shot_month != "Don't know") %>% 
+  filter(coverage != "don't know") %>%
+  filter(coverage != "NA") %>% 
+  ggplot(aes(x = coverage, y = flu_shot_month, color = coverage, alpha = .04)) + geom_jitter() + scale_fill_manual(values = wes_palette("GrandBudapest2")) + transition_states(
+   coverage,transition_length = 2, state_length = 5) + enter_grow() + exit_shrink() + ease_aes('sine-in-out')
+```
+
+hex sticker?
+**problem is loading the image into the vector**
+```{r}
+imgurl <- system.file("hexstick/tina2.png", package="hexSticker")
+```
+trying hex sticker
+
+*this isn't where the problem lies*
+```{r}
+sticker(tina, package="hexSticker", p_size=20, s_x=1, s_y=.75, s_width=.6,
+        filename="./hexstick/trial3.png")
 ```
 
