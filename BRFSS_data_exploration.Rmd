@@ -147,6 +147,33 @@ brfss_df %>%
   
 
 ```
+plot: flushot yes no by insurance yes no
+
+```{r}
+
+flushot_insurance =
+brfss_df %>%
+  mutate(
+    insurance = as.factor(hlthpln1)
+  ) %>%
+  drop_na(insurance, flushot_yn) %>%
+  mutate(
+    insurance = recode(insurance,
+                          '1' = 'Yes',
+                          '2' = 'No')
+  )%>% 
+  filter(flushot_yn != "Don't know/not sure")%>%
+  filter(flushot_yn != "Refused")%>%
+  filter(insurance != "7")%>%
+  filter(insurance != "9")%>%
+  count(insurance, flushot_yn)%>%
+  group_by(insurance, flushot_yn) %>%
+  ggplot(aes(x = insurance, y = n, fill = flushot_yn))+
+  geom_bar(position = "stack", stat = "identity")
+  
+ggplotly(flushot_insurance)
+
+```
 
 Ok finally here's a little plot of the counts of where people got the vaccine. How many people actually responded yes?
 
