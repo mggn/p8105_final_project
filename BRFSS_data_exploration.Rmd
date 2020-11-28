@@ -352,10 +352,17 @@ url = "https://twitter.com/search?q=flu%20vaccines&src=typeahead_click"
 twitter_html = read_html(url)%>%
   html_nodes(css = "table")
 
-tweets <- search_tweets(q = "#Vaccine", 
+tweets = search_tweets(q = "#Vaccine", 
                         n = 18000,
                         include_rts = FALSE,
                         `-filter` = "replies",
                         lang = "en")
+
+ts_plot(tweets, "hours") +
+  labs(x = NULL, y = NULL,
+       title = "Frequency of tweets with a #Vaccine hashtag",
+       subtitle = paste0(format(min(tweets$created_at), "%d %B %Y"), " to ", format(max(tweets$created_at),"%d %B %Y")),
+       caption = "Data collected from Twitter's REST API via rtweet") +
+  theme_minimal()
 
 ```
