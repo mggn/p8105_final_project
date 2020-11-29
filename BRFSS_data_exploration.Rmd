@@ -363,12 +363,6 @@ tweets1 = search_tweets(q = "#Vaccine",
                         `-filter` = "replies",
                         lang = "en")
 
-ts_plot(tweets, "hours") +
-  labs(x = NULL, y = NULL,
-       title = "Frequency of tweets with a #Vaccine hashtag",
-       subtitle = paste0(format(min(tweets$created_at), "%d %B %Y"), " to ", format(max(tweets$created_at),"%d %B %Y")),
-       caption = "Data collected from Twitter's REST API via rtweet") +
-  theme_minimal()
 
 tweets_df = 
   search_tweets(q = "flu OR shot OR vaccine", 
