@@ -9,6 +9,7 @@ output: github_document
 library(tidyverse)
 library(httr)
 library(rvest)
+library(leaflet)
 
 knitr::opts_chunk$set(
   fig.width = 6,
@@ -60,6 +61,26 @@ vax_map =
 vax_map
 ```
 
-Rad.
+Rad. Now do it in `plotly` and add a `leaflet` layer.
+
+```{r, eval= FALSE}
+vax_plotly = 
+  flu_vax_tidy %>% 
+  mutate(text_label = facility_name, "\nZip Code: ", zip_code) %>% 
+  plot_ly(
+    x = ~longitude, y = ~latitude, color = ~borough,
+    text = ~text_label, alpha = 0.7, type = "scatter", mode = "markers"
+  ) 
+
+vax_leaf = 
+  flu_vax_tidy %>% 
+  leaflet() %>% 
+  addProviderTiles(providers$CartoDB.Positron) %>% 
+  addCircleMarkers(lat = ~latitude, lng = ~longitude, radius = 0.1)
+
+vax_plotly
+vax_leaf
+```
+
 
 
