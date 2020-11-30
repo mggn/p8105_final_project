@@ -9,9 +9,17 @@ output: github_document
 
 *"The Behavioral Risk Factor Surveillance System (BRFSS) is the nation’s premier system of health-related telephone surveys that collect state data about U.S. residents regarding their health-related risk behaviors, chronic health conditions, and use of preventive services. Established in 1984 with 15 states, BRFSS now collects data in all 50 states as well as the District of Columbia and three U.S. territories. BRFSS completes more than 400,000 adult interviews each year, making it the largest continuously conducted health survey system in the world."*
 
+11/28/2020: Logit models of interest?
+-flushot y/n on chroniccond y/n
+-flushot y/n on insurance y/n
+-exploration of medcost
+
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(haven) #since this data is in xpt format
+library(plotly)
+library(viridis)
+
 ```
 
 First, we need to import the data using read_xpt
@@ -20,10 +28,74 @@ First, we need to import the data using read_xpt
 
 brfss_df =
   read_xpt("./final_project_large_data/LLCP2019.xpt") %>%
-  janitor::clean_names()
+  janitor::clean_names()%>%
+  mutate(
+    state = as.factor(state),
+    flushot_yn = as.factor(flushot7)
+  )%>%
+  mutate(
+    state = recode(state,
+         "1" = "Alabama",
+         "2" = "Alaska",
+         "4" = "Arizona",
+         "5" = "Arkansas",
+         "6" = "California",
+         "8" = "Colorado",
+         "9" = "Connecticut",
+         "10" = "Delaware",
+         "11" = "District of Columbia",
+         "12" = "Florida",
+         "13" = "Georgia",
+         "15" = "Hawaii",
+         "16" = "Idaho",
+         "17" = "Illinois",
+         "18" = "Indiana",
+         "19" = "Iowa",
+         "20" = "Kansas",
+         "21" = "Kentucky",
+         "22" = "Louisiana",
+         "23" = "Maine",
+         "24" = "Maryland",
+         "25" = "Massachusetts",
+         "26" = "Michigan",
+         "27" = "Minnesota",
+         "28" = "Mississippi",
+         "29" = "Missouri",
+         "30" = "Montana",
+         "31" = "Nebraska",
+         "32" = "Nevada",
+         "33" = "New Hampshire",
+         "35" = "New Mexico",
+         "36" = "New York",
+         "37" = "North Carolina",
+         "38" = "North Dakota",
+         "39" = "Ohio",
+         "40" = "Oklahoma",
+         "41" = "Oregon",
+         "42" = "Pennsylvania",
+         "44" = "Rhode Island",
+         "45" = "South Carolina",
+         "46" = "South Dakota",
+         "47" = "Tennessee",
+         "48" = "Texas",
+         "49" = "Utah",
+         "50" = "Vermont",
+         "51" = "Virginia",
+         "53" = "Washington",
+         "54" = "West Virginia",
+         "55" = "Wisconsin",
+         "56" = "Wyoming",
+         "66" = "Guam",
+         "72" = "Puerto Rico"),
+    flushot_yn = recode(flushot_yn,
+          "1" = "Yes",
+          "2" = "No",
+          "7" = "Don't know/not sure",
+          "9" = "Refused")
+  )
 
-head(brfss_df)
-names(brfss_df)
+
+#head(brfss_df)
 
 ```
 per the environment and the code above, we can see that there are 418,268 observations and 342 variables. Upon first glance,
@@ -31,38 +103,273 @@ the names do not seem that intuitive, so we will have to refer to the codebook a
 
 Based, off of this codebook and our interest in vaccines, I will peruse the data and select:
 -a participant id  
--location: it would be great to focus on new york  
+-NATIONAL  
 -demographic variables
--variables pertaining to flu vaccine usage
+-variables pertaining to flu vaccine
+
 
 #### poking through the codebook and the clean names
 
-These are the variables of interest; I will refine and clean tomorrow 11/19/2020
+Yesterday, I went through the codebook online and pulled the variables of interest. The purpose of creating this codebook,
+which is in the project file called "BRFSS_codebook_streamlined", is to (1) compare variables with Ronae's national survey,
+which seems to have a lot of overlap with this survey but may be more comprehensive. This comparison will lead us to (2) deciding
+which dataset to keep and how to split up the larger dataset, if necessary. Finally, before our meeting today I will (3) perform
+some preliminary data exploration and visualization now that I know which variables to select.
 
-"state"   
-"fmonth"  
-"idate"   
-"imonth"   "iday"     "iyear"    
-"seqno"    "psu" 
-"statere1"  "ladult1"  "colgsex"  "numadult" "landsex"  "nummen"   "numwomen" "respslct"
-"cadult1"  "cellsex"  "pvtresd3"  "cstate1"   "hhadult"  "sexvar"   "genhlth" 
-"physhlth" "menthlth" "poorhlth" "hlthpln1 = health insurance coverage"
-"persdoc2" 
-"medcost"  
-"checkup1" 
-"chcscncr" "chcocncr" "chccopd2" "addepev3" "chckdny2"
-"marital"  "educa"    "renthom1"
-"numhhol3" "numphon3" 
- "veteran3" "employ1"  "children" "income2"  
-"weight2"  "pregnant"   
+```{r data_streamline}
+
  
- "flushot7" "flshtmy3" 
-"tetanus1" "pneuvac4" 
+brfss_df %>%
+  select(seqno, state, sexvar, genhlth, physhlth, menthlth, hlthpln1, persdoc2, medcost, checkup1,
+         flushot7, imfvpla1, urbstat) %>%
+  mutate(
+    flu_vacc_loc = as.factor(imfvpla1)
+  ) %>%
+  drop_na(flu_vacc_loc) %>%
+  mutate(
+    flu_vacc_loc = recode(flu_vacc_loc,
+                          '1' = "Doctor's office/HMO",
+                          '2' = "Health dept",
+                          '3' = "Clinic/health center",
+                          '4' = "Senior, rec, or community center",
+                          '5' = "Supermarket/pharmacy",
+                          '6' = "Hospital",
+                          '7' = "ER",
+                          '8' = "Workplace",
+                          '9' = "Elsewhere",
+                          '10' = "Canada/Mexico",
+                          '11' = "A school",
+                          '77' = "Don't know/not sure",
+                          '99' = "Refused"),
+  )%>% 
+  count(flu_vacc_loc)%>%
+  mutate(flu_vacc_loc = fct_reorder(flu_vacc_loc, n)) %>%
+    plot_ly(x = ~flu_vacc_loc, y = ~n, color = ~flu_vacc_loc, type = "bar", colors = "plasma") %>%
+  layout(
+    xaxis = list(title = "Flu vaccine location"),
+    yaxis = list(title = "Count (n)")
+  )
+  
 
- "foodstmp" "birthsex" "somale"   "sofemale" "trnsgndr" "rcsgendr" "rcsrltn2" "casthdx2"
- "imprace" 
-"chispnc"  "crace1"   "cprace"   "cllcpwt"  
+```
+plot: flushot yes no by insurance yes no
 
-"prace1"   "mrace1"   "hispanc"  "race"     "raceg21"  "racegr3"  "race_g1"  "sex"      "ageg5yr"  "age65yr"  "age80"   
-"age_g"    "htin4"    "htm4"     "wtkg3"    "bmi5"     "bmi5cat"  "rfbmi5"   "chldcnt"  "educag"   "incomg"   "smoker3" 
+```{r}
 
+flushot_insurance =
+brfss_df %>%
+  mutate(
+    insurance = as.factor(hlthpln1)
+  ) %>%
+  drop_na(insurance, flushot_yn) %>%
+  mutate(
+    insurance = recode(insurance,
+                          '1' = 'Yes',
+                          '2' = 'No')
+  )%>% 
+  filter(flushot_yn != "Don't know/not sure")%>%
+  filter(flushot_yn != "Refused")%>%
+  filter(insurance != "7")%>%
+  filter(insurance != "9")%>%
+  count(insurance, flushot_yn)%>%
+  group_by(insurance, flushot_yn) %>%
+  ggplot(aes(x = insurance, y = n, fill = flushot_yn))+
+  geom_bar(position = "stack", stat = "identity")
+  
+ggplotly(flushot_insurance)
+
+```
+
+Ok finally here's a little plot of the counts of where people got the vaccine. How many people actually responded yes?
+
+```{r}
+library(wesanderson)
+
+#Midwest
+plot_midwest =
+  brfss_df %>%
+  filter(
+    state == c("Illinois", "Indiana", "Iowa", "Kansas", "Michigan", "Minnesota",
+               "Missouri", "Nebraska", "North Dakota", "Ohio", "South Dakota",
+               "Wisconsin")
+    )%>%
+  drop_na(flushot_yn, state) %>%
+  select (state, flushot_yn) %>%
+  group_by(state, flushot_yn)%>%
+  summarize(n_obs = n()) %>%
+  mutate(
+    pct = n_obs/sum(n_obs)
+  )%>%
+  filter(flushot_yn != "Don't know/not sure")%>%
+  filter(flushot_yn != "refused")%>%
+  ggplot(aes(fill = flushot_yn, y = pct, x = state))+
+  geom_bar(position="dodge", stat = "identity")+
+  ylim(0, 1.0)+
+  theme_bw()+
+  labs(
+    x = "State",
+    y = "% Response",
+    title = "Frequency of flu vaccinations in the Midwestern region of the U.S"
+  )+
+  scale_fill_discrete(name = "Response")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 1))
+ 
+ggplotly(plot_midwest) 
+ 
+
+```
+
+
+```{r}
+
+plot_northeast =
+ brfss_df %>%
+  filter(
+    state == c("Connecticut","District of Columbia", "Delaware","Maine", "Massachusetts", "Maryland",
+               "New Hampshire", "New Jersey", "New York", "Pennsylvania",
+               "Rhode Island", "Vermont")
+    )%>%
+  drop_na(flushot_yn, state) %>%
+  select (state, flushot_yn) %>%
+  group_by(state, flushot_yn)%>%
+  summarize(n_obs = n()) %>%
+  mutate(
+    pct = n_obs/sum(n_obs)
+  )%>%
+  filter(flushot_yn != "Don't know/not sure")%>%
+  filter(flushot_yn != "refused")%>%
+  ggplot(aes(fill = flushot_yn, y = pct, x = state))+
+  geom_bar(position="dodge", stat = "identity")+
+  ylim(0, 1.0)+
+  theme_bw()+
+  labs(
+    x = "State",
+    y = "% Response",
+    title = "Frequency of flu vaccinations in the Northeastern region of the U.S."
+  )+
+  scale_fill_discrete(name = "Response")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 1)) 
+
+ggplotly(plot_northeast)
+
+  
+```
+
+
+```{r}
+plot_west =
+ brfss_df %>%
+  filter(
+    state == c("Alaska", "Arizona", "California", "Colorado","Hawaii", "Idaho", "Montana",
+               "Nevada", "New Mexico", "Oregon", "Utah", "Washington",
+               "Wyoming")
+    )%>%
+  drop_na(flushot_yn, state) %>%
+  select (state, flushot_yn) %>%
+  group_by(state, flushot_yn)%>%
+  summarize(n_obs = n()) %>%
+  mutate(
+    pct = n_obs/sum(n_obs)
+  )%>%
+  filter(flushot_yn != "Don't know/not sure")%>%
+  filter(flushot_yn != "refused")%>%
+  ggplot(aes(fill = flushot_yn, y = pct, x = state))+
+  geom_bar(position="dodge", stat = "identity")+
+  ylim(0, 1.0)+
+  theme_bw()+
+  labs(
+    x = "State",
+    y = "% Response",
+    title = "Frequency of flu vaccinations in the Western region of the U.S."
+  )+
+  scale_fill_discrete(name = "Response")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 1))
+
+ggplotly(plot_west)
+
+```
+
+```{r}
+plot_south =
+ brfss_df %>%
+  filter(
+    state == c("Alabama","Arkansas", "Florida", "Kentucky", "Louisiana", 
+               "Mississippi", "North Carolina", "Oklahoma", "South Carolina",
+               "Tennessee", "Texas", "Virginia", "West Virginia")
+    )%>%
+  drop_na(flushot_yn, state) %>%
+  select (state, flushot_yn) %>%
+  group_by(state, flushot_yn)%>%
+  summarize(n_obs = n()) %>%
+  mutate(
+    pct = n_obs/sum(n_obs)
+  )%>%
+  filter(flushot_yn != "Don't know/not sure")%>%
+  filter(flushot_yn != "refused")%>%
+  ggplot(aes(fill = flushot_yn, y = pct, x = state))+
+  geom_bar(position="dodge", stat = "identity")+
+  ylim(0, 1.0)+
+  theme_bw()+
+  labs(
+    x = "State",
+    y = "% Response",
+    title = "Frequency of flu vaccinations in the Southern region of the U.S."
+  )+
+  scale_fill_discrete(name = "Response")+
+  theme(axis.text.x = element_text(angle = 45, vjust = 0.5, hjust = 1))
+
+ggplotly(plot_south)
+
+```
+
+#### Will try to iterate over datasets from 2015 to now and see if I can plot a trend
+hopefully the code will be similar to what we did in the last homework
+
+```{r}
+goal_trend = 
+list.files(path = "./final_project_large_data", full.names=FALSE)%>%
+  tibble::enframe(name = NULL)
+
+```
+
+Data too large :-(
+```{r}
+# goal_trend_df =
+#   goal_trend %>%
+#   mutate(
+#     data = map(value, ~read_xpt(str_c("./final_project_large_data/", .x)))
+#   )%>%
+#   unnest(cols = data)%>%
+#   separate(value, into=c("survey", "year"))
+
+```
+
+#### I want to try and scrape data from twitter HA!
+
+```{r}
+library(rvest)
+library(httr)
+library(rtweet)
+library(httpuv)
+#look at twitr
+
+url = "https://twitter.com/search?q=flu%20vaccines&src=typeahead_click"
+twitter_html = read_html(url)%>%
+  html_nodes(css = "table")
+
+tweets1 = search_tweets(q = "#Vaccine", 
+                        n = 18000,
+                        include_rts = FALSE,
+                        `-filter` = "replies",
+                        lang = "en")
+
+
+tweets_df = 
+  search_tweets(q = "flu OR shot OR vaccine", 
+                        n = 18000,
+                        include_rts = FALSE,
+                        `-filter` = "replies",
+                        lang = "en") %>%
+  write_as_csv("./final_project_large_data/tweets_df.csv")
+
+```
