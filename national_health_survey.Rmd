@@ -542,6 +542,9 @@ flu_adult_df %>%
 when we look at covid rates, we notice that black and brown communities are disproportionately affected by infection.  Let's look at this for Hispanic groups in regards to flu and health
 
 **want to make this more readable** 
+
+?dodge for density???
+ridge plot... 
 ```{r}
 flu_adult_df %>% 
   filter(health != "no response") %>% 
