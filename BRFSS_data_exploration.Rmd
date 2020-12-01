@@ -201,7 +201,7 @@ plot_midwest =
     pct = n_obs/sum(n_obs)
   )%>%
   filter(flushot_yn != "Don't know/not sure")%>%
-  filter(flushot_yn != "refused")%>%
+  filter(flushot_yn != "Refused")%>%
   ggplot(aes(fill = flushot_yn, y = pct, x = state))+
   geom_bar(position="dodge", stat = "identity")+
   ylim(0, 1.0)+
@@ -351,7 +351,8 @@ library(rvest)
 library(httr)
 library(rtweet)
 library(httpuv)
-#look at twitr
+#look at twitr test
+
 
 url = "https://twitter.com/search?q=flu%20vaccines&src=typeahead_click"
 twitter_html = read_html(url)%>%
