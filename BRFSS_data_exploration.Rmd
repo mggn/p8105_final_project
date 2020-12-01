@@ -354,23 +354,23 @@ library(httpuv)
 #look at twitr test
 
 
-url = "https://twitter.com/search?q=flu%20vaccines&src=typeahead_click"
-twitter_html = read_html(url)%>%
-  html_nodes(css = "table")
-
-tweets1 = search_tweets(q = "#Vaccine", 
-                        n = 18000,
-                        include_rts = FALSE,
-                        `-filter` = "replies",
-                        lang = "en")
-
-
-tweets_df = 
-  search_tweets(q = "flu OR shot OR vaccine", 
-                        n = 18000,
-                        include_rts = FALSE,
-                        `-filter` = "replies",
-                        lang = "en") %>%
-  write_as_csv("./final_project_large_data/tweets_df.csv")
+# url = "https://twitter.com/search?q=flu%20vaccines&src=typeahead_click"
+# twitter_html = read_html(url)%>%
+#   html_nodes(css = "table")
+# 
+# tweets1 = search_tweets(q = "#Vaccine", 
+#                         n = 18000,
+#                         include_rts = FALSE,
+#                         `-filter` = "replies",
+#                         lang = "en")
+# 
+# 
+# tweets_df = 
+#   search_tweets(q = "flu OR shot OR vaccine", 
+#                         n = 18000,
+#                         include_rts = FALSE,
+#                         `-filter` = "replies",
+#                         lang = "en") %>%
+#   write_as_csv("./final_project_large_data/tweets_df.csv")
 
 ```
