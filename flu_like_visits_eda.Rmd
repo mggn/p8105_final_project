@@ -7,8 +7,6 @@ output: github_document
 
 ```{r setup, include=FALSE}
 library(tidyverse)
-library(rvest)
-library(httr)
 library(plotly)
 
 knitr::opts_chunk$set(
@@ -34,45 +32,32 @@ We will use the pared down dataset created earlier.
 
 ```{r}
 flu_visits = 
-  read_csv("./ed_flu_tidy.csv")
+  read_csv("./ed_flu_tidy.csv") %>% 
+  mutate(mod_zcta = as.factor(mod_zcta))
 ```
 
-Pull in zip code/borough tibble from [the web]("https://www.health.ny.gov/statistics/cancer/registry/appendix/neighborhoods.htm").
+Merging with our zip code-by-borough dataset will allow us to aggregate within zip codes and boroughs, and compare to other data sets with zip code data.
 
-```{r, eval = FALSE}
-url = "https://www.health.ny.gov/statistics/cancer/registry/appendix/neighborhoods.htm"
+```{r}
+zip_boro = 
+  read_csv("./nyc_zip_boro.csv") %>% 
+  janitor::clean_names() %>% 
+  mutate(zip_codes = as.factor(zip_codes))
 
-zip_boro_html = read_html(url)
-
-zip_boro_df = 
-  zip_boro_html %>% 
-  html_nodes(css = "table") %>% 
-  html_table(header = TRUE) %>% 
-  colnames()
-  as_tibble(rownames = c("boro", "neighborhood", "zip_code"))
-  mutate(
-    boro = as.character(Borough),
-    neighborhood = as.character(Neighborhood),
-    zip_code = as.character("Zip Codes")
-  ) %>% 
-  select(-Neighborhood) %>% 
-  janitor::clean_names()
-
+visits_w_zip = 
+  left_join(flu_visits, zip_boro, by = c("mod_zcta" = "zip_codes"))
 ```
-
-
-
 
 Create a map using `plotly`.
 
 ```{r}
-flu_visits %>% 
+visits_w_zip %>% 
   mutate(text_label = str_c(
     "Date: ", date, 
     "\n% ILI Visits: ", pct_visits,
     "\n% ILI Admissions: ", pct_adm)) %>% 
   plot_ly(
-    x = ~date, y = ~total_ed_visits, color = ~mod_zcta, text = ~text_label,
+    x = ~date, y = ~total_ed_visits, color = ~borough, text = ~text_label,
     alpha = 0.3, type = "scatter", mode = "markers"
   )
 ```
