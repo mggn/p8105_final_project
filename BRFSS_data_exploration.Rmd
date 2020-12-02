@@ -9,6 +9,11 @@ output: github_document
 
 *"The Behavioral Risk Factor Surveillance System (BRFSS) is the nation’s premier system of health-related telephone surveys that collect state data about U.S. residents regarding their health-related risk behaviors, chronic health conditions, and use of preventive services. Established in 1984 with 15 states, BRFSS now collects data in all 50 states as well as the District of Columbia and three U.S. territories. BRFSS completes more than 400,000 adult interviews each year, making it the largest continuously conducted health survey system in the world."*
 
+11/28/2020: Logit models of interest?
+-flushot y/n on chroniccond y/n
+-flushot y/n on insurance y/n
+-exploration of medcost
+
 ```{r setup, include=FALSE}
 library(tidyverse)
 library(haven) #since this data is in xpt format
@@ -196,9 +201,10 @@ plot_midwest =
     pct = n_obs/sum(n_obs)
   )%>%
   filter(flushot_yn != "Don't know/not sure")%>%
-  filter(flushot_yn != "refused")%>%
+  filter(flushot_yn != "Refused")%>%
+  fct_reorder
   ggplot(aes(fill = flushot_yn, y = pct, x = state))+
-  geom_bar(position="dodge", stat = "identity")+
+  geom_bar(position="stack", stat = "identity")+
   ylim(0, 1.0)+
   theme_bw()+
   labs(
@@ -346,16 +352,26 @@ library(rvest)
 library(httr)
 library(rtweet)
 library(httpuv)
-#look at twitr
+#look at twitr test
 
-url = "https://twitter.com/search?q=flu%20vaccines&src=typeahead_click"
-twitter_html = read_html(url)%>%
-  html_nodes(css = "table")
 
-tweets <- search_tweets(q = "#Vaccine", 
-                        n = 18000,
-                        include_rts = FALSE,
-                        `-filter` = "replies",
-                        lang = "en")
+# url = "https://twitter.com/search?q=flu%20vaccines&src=typeahead_click"
+# twitter_html = read_html(url)%>%
+#   html_nodes(css = "table")
+# 
+# tweets1 = search_tweets(q = "#Vaccine", 
+#                         n = 18000,
+#                         include_rts = FALSE,
+#                         `-filter` = "replies",
+#                         lang = "en")
+# 
+# 
+# tweets_df = 
+#   search_tweets(q = "flu OR shot OR vaccine", 
+#                         n = 18000,
+#                         include_rts = FALSE,
+#                         `-filter` = "replies",
+#                         lang = "en") %>%
+#   write_as_csv("./final_project_large_data/tweets_df.csv")
 
 ```

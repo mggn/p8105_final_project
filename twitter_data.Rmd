@@ -1,0 +1,32 @@
+---
+title: "Twitter_data"
+author: "mggn"
+date: "12/1/2020"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+library(tidyverse)
+library(haven) #since this data is in xpt format
+library(plotly)
+library(viridis)
+```
+```{r setup, include=FALSE}
+
+tweets_df =
+read_csv("./final_project_large_data/tweets_df.csv")
+
+tweets_df %>%
+  select(created_at, text)
+
+```
+
+```{r setup, include=FALSE}
+
+tweets_df2 =
+read_csv("./final_project_large_data/tweets_df2.csv")
+
+tweets_df2 %>%
+  select(created_at, text)
+
+```
