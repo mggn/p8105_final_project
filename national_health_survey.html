@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+<meta charset="utf-8" />
+<meta name="generator" content="pandoc" />
+<meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
+
+
+<meta name="author" content="Ronae McLin" />
+
+<meta name="date" content="2020-11-16" />
+
+<title>National Health Survey</title>
+
+<script src="site_libs/jquery-1.11.3/jquery.min.js"></script>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<link href="site_libs/bootstrap-3.3.5/css/bootstrap.min.css" rel="stylesheet" />
+<script src="site_libs/bootstrap-3.3.5/js/bootstrap.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/html5shiv.min.js"></script>
+<script src="site_libs/bootstrap-3.3.5/shim/respond.min.js"></script>
+<script src="site_libs/navigation-1.1/tabsets.js"></script>
+<link href="site_libs/highlightjs-9.12.0/default.css" rel="stylesheet" />
+<script src="site_libs/highlightjs-9.12.0/highlight.js"></script>
+<link href="site_libs/font-awesome-5.1.0/css/all.css" rel="stylesheet" />
+<link href="site_libs/font-awesome-5.1.0/css/v4-shims.css" rel="stylesheet" />
+
+<style type="text/css">code{white-space: pre;}</style>
+<style type="text/css">
+  pre:not([class]) {
+    background-color: white;
+  }
+</style>
+<script type="text/javascript">
+if (window.hljs) {
+  hljs.configure({languages: []});
+  hljs.initHighlightingOnLoad();
+  if (document.readyState && document.readyState === "complete") {
+    window.setTimeout(function() { hljs.initHighlighting(); }, 0);
+  }
+}
+</script>
+
+
+
+<style type="text/css">
+h1 {
+  font-size: 34px;
+}
+h1.title {
+  font-size: 38px;
+}
+h2 {
+  font-size: 30px;
+}
+h3 {
+  font-size: 24px;
+}
+h4 {
+  font-size: 18px;
+}
+h5 {
+  font-size: 16px;
+}
+h6 {
+  font-size: 12px;
+}
+.table th:not([align]) {
+  text-align: left;
+}
+</style>
+
+
+
+
+<style type = "text/css">
+.main-container {
+  max-width: 940px;
+  margin-left: auto;
+  margin-right: auto;
+}
+code {
+  color: inherit;
+  background-color: rgba(0, 0, 0, 0.04);
+}
+img {
+  max-width:100%;
+}
+.tabbed-pane {
+  padding-top: 12px;
+}
+.html-widget {
+  margin-bottom: 20px;
+}
+button.code-folding-btn:focus {
+  outline: none;
+}
+summary {
+  display: list-item;
+}
+</style>
+
+
+<style type="text/css">
+/* padding for bootstrap navbar */
+body {
+  padding-top: 51px;
+  padding-bottom: 40px;
+}
+/* offset scroll position for anchor links (for fixed navbar)  */
+.section h1 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h2 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h3 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h4 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h5 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.section h6 {
+  padding-top: 56px;
+  margin-top: -56px;
+}
+.dropdown-submenu {
+  position: relative;
+}
+.dropdown-submenu>.dropdown-menu {
+  top: 0;
+  left: 100%;
+  margin-top: -6px;
+  margin-left: -1px;
+  border-radius: 0 6px 6px 6px;
+}
+.dropdown-submenu:hover>.dropdown-menu {
+  display: block;
+}
+.dropdown-submenu>a:after {
+  display: block;
+  content: " ";
+  float: right;
+  width: 0;
+  height: 0;
+  border-color: transparent;
+  border-style: solid;
+  border-width: 5px 0 5px 5px;
+  border-left-color: #cccccc;
+  margin-top: 5px;
+  margin-right: -10px;
+}
+.dropdown-submenu:hover>a:after {
+  border-left-color: #ffffff;
+}
+.dropdown-submenu.pull-left {
+  float: none;
+}
+.dropdown-submenu.pull-left>.dropdown-menu {
+  left: -100%;
+  margin-left: 10px;
+  border-radius: 6px 0 6px 6px;
+}
+</style>
+
+<script>
+// manage active state of menu based on current page
+$(document).ready(function () {
+  // active menu anchor
+  href = window.location.pathname
+  href = href.substr(href.lastIndexOf('/') + 1)
+  if (href === "")
+    href = "index.html";
+  var menuAnchor = $('a[href="' + href + '"]');
+
+  // mark it active
+  menuAnchor.parent().addClass('active');
+
+  // if it's got a parent navbar menu mark it active as well
+  menuAnchor.closest('li.dropdown').addClass('active');
+});
+</script>
+
+<!-- tabsets -->
+
+<style type="text/css">
+.tabset-dropdown > .nav-tabs {
+  display: inline-table;
+  max-height: 500px;
+  min-height: 44px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.tabset-dropdown > .nav-tabs > li.active:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li.active:before {
+  content: "&#xe258;";
+  border: none;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open:before {
+  content: "";
+  font-family: 'Glyphicons Halflings';
+  display: inline-block;
+  padding: 10px;
+  border-right: 1px solid #ddd;
+}
+
+.tabset-dropdown > .nav-tabs > li.active {
+  display: block;
+}
+
+.tabset-dropdown > .nav-tabs > li > a,
+.tabset-dropdown > .nav-tabs > li > a:focus,
+.tabset-dropdown > .nav-tabs > li > a:hover {
+  border: none;
+  display: inline-block;
+  border-radius: 4px;
+  background-color: transparent;
+}
+
+.tabset-dropdown > .nav-tabs.nav-tabs-open > li {
+  display: block;
+  float: none;
+}
+
+.tabset-dropdown > .nav-tabs > li {
+  display: none;
+}
+</style>
+
+<!-- code folding -->
+
+
+
+
+</head>
+
+<body>
+
+
+<div class="container-fluid main-container">
+
+
+
+
+<div class="navbar navbar-default  navbar-fixed-top" role="navigation">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="index.html">Home</a>
+    </div>
+    <div id="navbar" class="navbar-collapse collapse">
+      <ul class="nav navbar-nav">
+        
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+  <a href="about.html">About</a>
+</li>
+<li>
+  <a href="mailto:&lt;you@youremail.com&gt;">
+    <span class="fa fa-envelope fa-lg"></span>
+     
+  </a>
+</li>
+<li>
+  <a href="http://github.com/&lt;YOUR_GH_NAME&gt;/">
+    <span class="fa fa-github fa-lg"></span>
+     
+  </a>
+</li>
+      </ul>
+    </div><!--/.nav-collapse -->
+  </div><!--/.container -->
+</div><!--/.navbar -->
+
+<div class="fluid-row" id="header">
+
+
+
+<h1 class="title toc-ignore">National Health Survey</h1>
+<h4 class="author">Ronae McLin</h4>
+<h4 class="date">11/16/2020</h4>
+
+</div>
+
+
+<div id="importing-and-tidying-the-national-health-survey-data" class="section level2">
+<h2>importing and tidying the National Health Survey data</h2>
+<p><strong><em>focus is on flu vaccines</em></strong></p>
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──</code></pre>
+<pre><code>## ✓ ggplot2 3.3.2     ✓ purrr   0.3.4
+## ✓ tibble  3.0.1     ✓ dplyr   1.0.0
+## ✓ tidyr   1.1.0     ✓ stringr 1.4.0
+## ✓ readr   1.3.1     ✓ forcats 0.5.0</code></pre>
+<pre><code>## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## x dplyr::filter() masks stats::filter()
+## x dplyr::lag()    masks stats::lag()</code></pre>
+<pre class="r"><code>library(plotly)</code></pre>
+<pre><code>## 
+## Attaching package: &#39;plotly&#39;</code></pre>
+<pre><code>## The following object is masked from &#39;package:ggplot2&#39;:
+## 
+##     last_plot</code></pre>
+<pre><code>## The following object is masked from &#39;package:stats&#39;:
+## 
+##     filter</code></pre>
+<pre><code>## The following object is masked from &#39;package:graphics&#39;:
+## 
+##     layout</code></pre>
+<pre class="r"><code>library(wesanderson)
+library(gganimate)
+library(gifski)
+library(transformr)
+library(magick)</code></pre>
+<pre><code>## Linking to ImageMagick 6.9.11.32
+## Enabled features: cairo, fontconfig, freetype, lcms, pango, rsvg, webp
+## Disabled features: fftw, ghostscript, x11</code></pre>
+<pre class="r"><code>library(png)
+library(patchwork)
+library(ggridges)</code></pre>
+<pre class="r"><code>knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = &quot;90%&quot;
+)
+theme_set(theme_minimal() + theme(legend.position = &quot;bottom&quot;))
+
+options(
+  ggplot2.continuous.colour = &quot;viridis&quot;,
+  ggplot2.continuous.fill = &quot;viridis&quot;
+)
+
+scale_colour_discrete = scale_color_viridis_d
+
+scale_fill_discrete = scale_fill_viridis_d</code></pre>
+<p>not really sure what this data set contains. need to look into this more</p>
+<p>adult sample for 2019</p>
+<p>** there is ALOT of information and variables within this dataset. we can take this into many different directions **</p>
+<pre class="r"><code>  adult_df = 
+  read_csv(&quot;adult19.csv&quot;)</code></pre>
+<pre><code>## Parsed with column specification:
+## cols(
+##   .default = col_double(),
+##   OGFLG_A = col_logical(),
+##   OPFLG_A = col_logical(),
+##   CHFLG_A = col_logical(),
+##   PRPLCOV2_C_A = col_logical(),
+##   STOMAAGETC_A = col_logical(),
+##   LARYNAGETC_A = col_logical(),
+##   GALLBAGETC_A = col_logical(),
+##   BRAINAGETC_A = col_logical(),
+##   BLOODAGETC_A = col_logical(),
+##   SHINGWHEN_A = col_logical(),
+##   OGHDHP_A = col_logical(),
+##   OPHDHP_A = col_logical(),
+##   CHHDHP_A = col_logical(),
+##   HHX = col_character()
+## )</code></pre>
+<pre><code>## See spec(...) for full column specifications.</code></pre>
+<pre><code>## Warning: 107 parsing failures.
+##  row          col           expected actual          file
+## 1348 BLOODAGETC_A 1/0/T/F/TRUE/FALSE     45 &#39;adult19.csv&#39;
+## 1375 BRAINAGETC_A 1/0/T/F/TRUE/FALSE     16 &#39;adult19.csv&#39;
+## 1790 BLOODAGETC_A 1/0/T/F/TRUE/FALSE     62 &#39;adult19.csv&#39;
+## 1924 OPHDHP_A     1/0/T/F/TRUE/FALSE     2  &#39;adult19.csv&#39;
+## 3306 BLOODAGETC_A 1/0/T/F/TRUE/FALSE     58 &#39;adult19.csv&#39;
+## .... ............ .................. ...... .............
+## See problems(...) for more details.</code></pre>
+<ul>
+<li>was SA pregnant last flu season?</li>
+<li>flu vaccine</li>
+<li>month of last flu vaccine,</li>
+<li>year of last flu vaccine</li>
+<li>was flu shot before or during pregnancy?</li>
+<li>earlier pregnancy and flu vaccine</li>
+<li>etc….</li>
+</ul>
+<p>there is an interesting category pertaining to mobility, this could be helpful if we end up discussing accessbility to loaction to obtain a flu shot</p>
+<p>there is also interesting category of variables pertaining to insurance plans and coverage.</p>
+<p>interesting category of variables pertaining to utilization of healthcare services, outside of the scope of only flu vaccines.</p>
+<pre class="r"><code>flu_adult_df =
+  adult_df %&gt;% 
+  janitor::clean_names() %&gt;% 
+  select(
+    srvy_yr,agep_a, age65, sex_a, educ_a,hisp_a, hispallp_a, hisdetp_a,phstat_a,bmicat_a, notcov_a, cover_a, usualpl_a, usplkind_a,  pregfluyr_a, shtflu12m_a, shtflum_a, shtfluy_a, flupreg2_a, raceallp_a, pregnow_a, disab3_a, socerrnds_a, cover65_a, lastdr_a, emerg12mtc_a, urgnt12mtc_a, natusborn_a,citznstp_a, povrattc_a, pregnow_a, paybll12m_a, hhx
+  ) %&gt;% 
+  mutate(
+   id = hhx,  
+    age =  as.factor(agep_a), 
+      age65 = case_when(
+      age65 == &quot;1&quot; ~ &quot;Less than 65&quot;,
+      age65 == &quot;2&quot; ~ &quot;65 or older&quot;,
+      age65 == &quot;7&quot; ~ &quot;No response&quot;,
+      age65 == &quot;8&quot; ~ &quot;Not applicable&quot;,
+      age65 == &quot;9&quot; ~ &quot;Don&#39;t know&quot;),
+      
+      sex = case_when(
+      sex_a == &quot;1&quot; ~ &quot;Male&quot;,
+      sex_a == &quot;2&quot; ~ &quot;Female&quot;,
+      sex_a == &quot;7&quot; ~ &quot;No response&quot;,
+      sex_a == &quot;8&quot; ~ &quot;Not applicable&quot;,
+      sex_a == &quot;9&quot; ~ &quot;Don&#39;t know&quot;),
+      
+      education = case_when(
+      educ_a == &quot;0&quot; ~ &quot;never attended&quot;,
+      educ_a == &quot;1&quot; ~ &quot;Grades 1-11&quot;,
+      educ_a == &quot;2&quot; ~ &quot;12th grade, no dipolma&quot;,
+      educ_a == &quot;3&quot; ~ &quot;GED&quot;,
+      educ_a == &quot;4&quot; ~ &quot;HS graduate&quot;,
+      educ_a == &quot;5&quot; ~ &quot;College, no degree&quot;,
+      educ_a == &quot;6&quot; ~ &quot;Associate degree-tech&quot;,
+      educ_a == &quot;7&quot; ~ &quot;Associate degree-aca&quot;,
+      educ_a == &quot;8&quot; ~ &quot;Bachelor&#39;s degree&quot;,
+      educ_a == &quot;9&quot; ~ &quot;Master&#39;s degree&quot;,
+      educ_a == &quot;10&quot; ~ &quot;Professional school&quot;,
+      educ_a == &quot;11&quot; ~ &quot;Doctoral degree&quot;,
+      educ_a == &quot;97&quot; ~ &quot;No response&quot;,
+      educ_a == &quot;98&quot; ~ &quot;Not applicable&quot;,
+      educ_a == &quot;99&quot; ~ &quot;Don&#39;t know&quot;),
+      
+      hispanic = case_when(
+      hisp_a == &quot;1&quot; ~ &quot;Yes&quot;,
+      hisp_a == &quot;2&quot; ~ &quot;No&quot;,
+     hisp_a == &quot;7&quot; ~ &quot;No response&quot;,
+     hisp_a == &quot;8&quot; ~ &quot;Not applicable&quot;,
+      hisp_a == &quot;9&quot; ~ &quot;Don&#39;t know&quot;),
+     
+     nh_race = case_when(
+      hispallp_a == &quot;1&quot; ~ &quot;hispanic&quot;,
+      hispallp_a == &quot;2&quot; ~ &quot;NH white&quot;,
+     hispallp_a == &quot;3&quot; ~ &quot;NH black&quot;, 
+     hispallp_a == &quot;4&quot; ~ &quot;NH asian&quot;,
+     hispallp_a == &quot;5&quot; ~ &quot;NH AIAN&quot;,
+      hispallp_a == &quot;6&quot; ~ &quot;NH AIAN and other&quot;,
+      hispallp_a == &quot;7&quot; ~ &quot;multiple races&quot;,
+       hispallp_a == &quot;97&quot; ~ &quot;No response&quot;,
+     hispallp_a == &quot;98&quot; ~ &quot;Not applicable&quot;,
+      hispallp_a == &quot;99&quot; ~ &quot;Don&#39;t know&quot;),
+     
+      hispanic_type = case_when(
+      hisdetp_a == &quot;1&quot; ~ &quot;hispanic mexican&quot;,
+      hisdetp_a == &quot;2&quot; ~ &quot;hispanic all others&quot;,
+     hisdetp_a == &quot;3&quot; ~ &quot;Not hispanic&quot;, 
+        hisdetp_a == &quot;7&quot; ~ &quot;No response&quot;,
+     hisdetp_a == &quot;8&quot; ~ &quot;Not applicable&quot;,
+      hisdetp_a == &quot;9&quot; ~ &quot;Don&#39;t know&quot;),
+     
+     health =  case_when(
+      phstat_a == &quot;1&quot; ~ &quot;excellent&quot;,
+      phstat_a == &quot;2&quot; ~ &quot;very good&quot;,
+      phstat_a == &quot;3&quot; ~ &quot;good&quot;,
+      phstat_a == &quot;4&quot; ~ &quot;fair&quot;,
+      phstat_a == &quot;5&quot; ~ &quot;poor&quot;,
+      phstat_a == &quot;7&quot; ~ &quot;no response&quot;,
+      phstat_a == &quot;8&quot; ~ &quot;not applicable&quot;,
+      phstat_a == &quot;9&quot; ~ &quot;Don&#39;t know&quot;),
+     
+      bmi =  case_when(
+      bmicat_a == &quot;1&quot; ~ &quot;underweight&quot;,
+      bmicat_a == &quot;2&quot; ~ &quot;healthy weight&quot;,
+       bmicat_a == &quot;3&quot; ~ &quot;overweight&quot;,
+       bmicat_a == &quot;4&quot; ~ &quot;obese&quot;,
+       bmicat_a == &quot;9&quot; ~ &quot;unknown&quot;),
+     
+  insurance = case_when(
+    notcov_a == &quot;1&quot; ~ &quot;not covered&quot;,
+    notcov_a == &quot;2&quot; ~ &quot;covered&quot;,
+    notcov_a == &quot;7&quot; ~ &quot;no response&quot;,
+    notcov_a == &quot;8&quot; ~ &quot;not applicable&quot;,
+    notcov_a == &quot;9&quot; ~ &quot;don&#39;t know&quot;),
+  
+    coverage = case_when(
+      cover_a == &quot;1&quot; ~ &quot;private&quot;,
+      cover_a == &quot;2&quot; ~ &quot;medicaid/other public&quot;,
+      cover_a == &quot;3&quot; ~ &quot;other&quot;,
+      cover_a == &quot;4&quot; ~ &quot;uninsured&quot;,
+      cover_a == &quot;5&quot; ~ &quot;don&#39;t know&quot;),
+  
+  facility_type = case_when(
+    usplkind_a == &quot;1&quot; ~ &quot;Doctor office/health center&quot;,
+    usplkind_a == &quot;2&quot; ~ &quot;Urgent care/clinic in store&quot;,
+    usplkind_a == &quot;3&quot; ~ &quot;emergency room&quot;,
+    usplkind_a == &quot;4&quot; ~ &quot;VA center &quot;,
+    usplkind_a == &quot;5&quot; ~ &quot;other&quot;,
+    usplkind_a == &quot;6&quot; ~ &quot;varies&quot;,
+    usplkind_a == &quot;8&quot; ~ &quot;not applicable&quot;,
+    usplkind_a == &quot;9&quot; ~ &quot;don&#39;t know&quot;),
+  
+  pregfluyr_a = case_when(
+  pregfluyr_a == &quot;1&quot; ~ &quot;yes&quot;,
+  pregfluyr_a == &quot;2&quot; ~ &quot;no&quot;,
+  pregfluyr_a == &quot;7&quot; ~ &quot;no response&quot;,
+  pregfluyr_a == &quot;8&quot; ~ &quot;not applicable&quot;,
+  pregfluyr_a == &quot;9&quot; ~ &quot;don&#39;t know&quot;),
+  
+  flu_shot  = case_when(
+  shtflu12m_a == &quot;1&quot; ~ &quot;yes&quot;,
+  shtflu12m_a == &quot;2&quot; ~ &quot;no&quot;,
+  shtflu12m_a == &quot;7&quot; ~ &quot;no response&quot;,
+  shtflu12m_a == &quot;8&quot; ~ &quot;not applicable&quot;,
+  shtflu12m_a == &quot;9&quot; ~ &quot;don&#39;t know&quot;),
+  
+    flu_shot_month = case_when(
+      shtflum_a == &quot;1&quot; ~ &quot;January&quot;,
+      shtflum_a == &quot;2&quot; ~ &quot;February&quot;,
+      shtflum_a == &quot;3&quot; ~ &quot;March&quot;,
+      shtflum_a == &quot;4&quot; ~ &quot;April&quot;,
+      shtflum_a == &quot;5&quot; ~ &quot;May&quot;,
+      shtflum_a == &quot;6&quot; ~ &quot;June&quot;,
+      shtflum_a == &quot;7&quot; ~ &quot;July&quot;,
+      shtflum_a == &quot;8&quot; ~ &quot;August&quot;,
+      shtflum_a == &quot;9&quot; ~ &quot;September&quot;,
+      shtflum_a == &quot;10&quot; ~ &quot;October&quot;,
+      shtflum_a == &quot;11&quot; ~ &quot;November&quot;,
+      shtflum_a == &quot;12&quot; ~ &quot;December&quot;,
+      shtflum_a == &quot;97&quot; ~ &quot;No response&quot;,
+      shtflum_a == &quot;98&quot; ~ &quot;Not applicable&quot;,
+      shtflum_a == &quot;99&quot; ~ &quot;Don&#39;t know&quot;),
+  
+   flu_shot_year = case_when(
+    shtfluy_a == &quot;9997&quot; ~ &quot;no response&quot;,
+    shtfluy_a == &quot;9998&quot; ~ &quot;not applicable&quot;,
+    shtfluy_a == &quot;9999&quot; ~ &quot;don&#39;t know&quot;),
+  
+  flushot_preg = case_when(
+    flupreg2_a == &quot;1&quot; ~ &quot;before pregnancy&quot;,
+    flupreg2_a == &quot;2&quot; ~ &quot;during pregnancy&quot;,
+    flupreg2_a == &quot;3&quot; ~ &quot;after pregnancy&quot;,
+    flupreg2_a == &quot;7&quot; ~ &quot;no response&quot;,
+    flupreg2_a == &quot;8&quot; ~ &quot;not applicable&quot;,
+    flupreg2_a == &quot;9&quot; ~ &quot;don&#39;t know&quot;),
+
+usual_place = case_when(
+    usualpl_a == &quot;1&quot; ~ &quot;yes&quot;,
+    usualpl_a == &quot;2&quot; ~ &quot;no&quot;,
+    usualpl_a == &quot;3&quot; ~ &quot;more than one place&quot;,
+    usualpl_a == &quot;7&quot; ~ &quot;no response&quot;,
+    usualpl_a == &quot;8&quot; ~ &quot;not applicable&quot;,
+    usualpl_a == &quot;9&quot; ~ &quot;don&#39;t know&quot;))</code></pre>
+<pre class="r"><code>flu_adult_df = 
+flu_adult_df %&gt;% 
+   mutate(
+      pregnant = case_when(
+      pregnow_a == &quot;1&quot; ~ &quot;yes&quot;,
+      pregnow_a == &quot;2&quot; ~ &quot;no&quot;,
+      pregnow_a == &quot;7&quot; ~ &quot;No response&quot;,
+      pregnow_a == &quot;8&quot; ~ &quot;Not applicable&quot;,
+      pregnow_a == &quot;9&quot; ~ &quot;Don&#39;t know&quot;),
+      
+      disability = case_when(
+      disab3_a == &quot;1&quot; ~ &quot;yes&quot;,
+      disab3_a == &quot;2&quot; ~ &quot;no&quot;,
+      disab3_a == &quot;9&quot; ~ &quot;don&#39;t know&quot;),
+      
+      errands_alone_diff = case_when(
+    socerrnds_a == &quot;1&quot; ~ &quot;none&quot;,
+    socerrnds_a == &quot;2&quot; ~ &quot;some&quot;,
+    socerrnds_a == &quot;3&quot; ~ &quot;a lot&quot;,
+    socerrnds_a == &quot;4&quot; ~ &quot;cannot do at all&quot;,
+    socerrnds_a == &quot;7&quot; ~ &quot;no response&quot;,
+    socerrnds_a == &quot;8&quot; ~ &quot;not applicable&quot;,
+    socerrnds_a == &quot;9&quot; ~ &quot;don&#39;t know&quot;),
+    
+    coverage_65 = case_when(
+    cover65_a == &quot;1&quot; ~ &quot;private&quot;,
+    cover65_a == &quot;2&quot; ~ &quot;dual eligible&quot;,
+    cover65_a == &quot;3&quot; ~ &quot;medicare advantage&quot;,
+    cover65_a == &quot;4&quot; ~ &quot;medicare only&quot;,
+    cover65_a == &quot;5&quot; ~ &quot;other&quot;,
+    cover65_a == &quot;6&quot; ~ &quot;uninsured&quot;,
+    cover65_a == &quot;7&quot; ~ &quot;don&#39;t know&quot;))</code></pre>
+<pre class="r"><code>flu_adult_df = 
+flu_adult_df %&gt;% 
+  mutate(
+     last_drvisit = case_when(
+    lastdr_a == &quot;0&quot; ~ &quot;never&quot;,
+    lastdr_a == &quot;1&quot; ~ &quot;within past year&quot;,
+    lastdr_a == &quot;2&quot; ~ &quot;within last 2 years&quot;,
+    lastdr_a == &quot;3&quot; ~ &quot;within last 3 years&quot;,
+    lastdr_a == &quot;4&quot; ~ &quot;within last 5 years&quot;,
+    lastdr_a == &quot;5&quot; ~ &quot;within last 10 years&quot;,
+    lastdr_a == &quot;6&quot; ~ &quot;10+ years&quot;,
+    lastdr_a == &quot;7&quot; ~ &quot;refused&quot;,
+    lastdr_a == &quot;8&quot; ~ &quot;not applicable&quot;,
+    lastdr_a == &quot;9&quot; ~ &quot;don&#39;t know&quot;),
+    
+    emergency_visits = case_when(
+    emerg12mtc_a == &quot;0&quot; ~ &quot;never&quot;,
+    emerg12mtc_a == &quot;1&quot; ~ &quot;once&quot;,
+    emerg12mtc_a == &quot;2&quot; ~ &quot;twice&quot;,
+    emerg12mtc_a == &quot;3&quot; ~ &quot;thrice&quot;,
+    emerg12mtc_a == &quot;4&quot; ~ &quot;4+ times&quot;,
+    emerg12mtc_a == &quot;7&quot; ~ &quot;refused&quot;,
+    emerg12mtc_a == &quot;8&quot; ~ &quot;not applicable&quot;,
+    emerg12mtc_a == &quot;9&quot; ~ &quot;don&#39;t know&quot;),
+    
+     urgentcare_visits = case_when(
+    urgnt12mtc_a == &quot;0&quot; ~ &quot;never&quot;,
+    urgnt12mtc_a == &quot;1&quot; ~ &quot;once&quot;,
+    urgnt12mtc_a == &quot;2&quot; ~ &quot;twice&quot;,
+    urgnt12mtc_a == &quot;3&quot; ~ &quot;thrice&quot;,
+    urgnt12mtc_a == &quot;4&quot; ~ &quot;4 times&quot;,
+    urgnt12mtc_a == &quot;5&quot; ~ &quot;5+ times&quot;,
+    urgnt12mtc_a == &quot;7&quot; ~ &quot;refused&quot;,
+    urgnt12mtc_a == &quot;8&quot; ~ &quot;not applicable&quot;,
+    urgnt12mtc_a == &quot;9&quot; ~ &quot;don&#39;t know&quot;)
+  )</code></pre>
+<pre class="r"><code>flu_adult_df = 
+flu_adult_df %&gt;% 
+  mutate(
+     usborn = case_when(
+      natusborn_a == &quot;1&quot; ~ &quot;yes&quot;,
+      natusborn_a == &quot;2&quot; ~ &quot;no&quot;,
+      natusborn_a == &quot;7&quot; ~ &quot;No response&quot;,
+      natusborn_a == &quot;8&quot; ~ &quot;Not applicable&quot;,
+      natusborn_a == &quot;9&quot; ~ &quot;Don&#39;t know&quot;),
+     
+     probs_paybill = case_when(
+      paybll12m_a == &quot;1&quot; ~ &quot;yes&quot;,
+      paybll12m_a == &quot;2&quot; ~ &quot;no&quot;,
+      paybll12m_a == &quot;7&quot; ~ &quot;No response&quot;,
+      paybll12m_a == &quot;8&quot; ~ &quot;Not applicable&quot;,
+      paybll12m_a == &quot;9&quot; ~ &quot;Don&#39;t know&quot;))</code></pre>
+<p>last tidy up</p>
+<pre class="r"><code>flu_adult_df = 
+flu_adult_df %&gt;% 
+  select(-agep_a, -sex_a, -educ_a,-hisp_a,-phstat_a,-bmicat_a, -cover_a, -usplkind_a,  -pregfluyr_a, -shtflu12m_a, -shtflum_a, -shtfluy_a, -flupreg2_a, -pregnow_a, -disab3_a, -socerrnds_a, -cover65_a, -lastdr_a, -emerg12mtc_a, -urgnt12mtc_a, -natusborn_a, -pregnow_a, -paybll12m_a
+  )</code></pre>
+<pre class="r"><code>flu_adult_df = 
+  flu_adult_df %&gt;% 
+  select(
+    -hispallp_a, -hisdetp_a, -citznstp_a, -povrattc_a, -raceallp_a, -usualpl_a, -notcov_a, -hhx
+  )</code></pre>
+<pre class="r"><code>flu_adult_df = 
+  flu_adult_df %&gt;% 
+  mutate(
+    sex = as.factor(sex),
+    nh_race = as.factor(nh_race),
+    health = as.factor(health),
+    bmi = as.factor(bmi),
+    age = as.numeric(age)
+  )</code></pre>
+<pre class="r"><code>flu_adult_df = 
+  flu_adult_df %&gt;% 
+  mutate(
+    coverage = as.factor(coverage),
+    education = as.factor(education),
+    insurance = as.factor(insurance),
+    flu_shot = as.factor(flu_shot),
+    flu_shot_month = as.factor(flu_shot_month))</code></pre>
+<pre class="r"><code>flu_adult_df = 
+flu_adult_df %&gt;% 
+   mutate(
+    bmi = fct_relevel(bmi, &quot;underweight&quot;, &quot;healthy weight&quot;, &quot;overweight&quot;, &quot;obese&quot;),
+    
+    flu_shot_month = fct_relevel(flu_shot_month,&quot;January&quot;,&quot;February&quot;,&quot;March&quot;,&quot;April&quot;,&quot;May&quot;,&quot;June&quot;,&quot;July&quot;,&quot;August&quot;,&quot;September&quot;,&quot;October&quot;,&quot;November&quot;,&quot;December&quot;),
+    
+    last_drvisit = fct_relevel(last_drvisit,&quot;within past year&quot;,&quot;within last 2 years&quot;,&quot;within last 3 years&quot;,&quot;within last 5 years&quot;,&quot;within last 10 years&quot;,&quot;10+ years&quot;, &quot;never&quot;),
+    
+    education = fct_relevel(education,
+      &quot;never attended&quot;,
+       &quot;Grades 1-11&quot;,
+       &quot;12th grade, no dipolma&quot;,
+       &quot;GED&quot;,
+       &quot;HS graduate&quot;,
+      &quot;College, no degree&quot;,
+      &quot;Associate degree-tech&quot;,
+       &quot;Associate degree-aca&quot;,
+      &quot;Bachelor&#39;s degree&quot;,
+       &quot;Master&#39;s degree&quot;,
+      &quot;Professional school&quot;,
+       &quot;Doctoral degree&quot;),
+    
+    flushot_preg = fct_relevel(flushot_preg, &quot;before pregnancy&quot;, &quot;during pregnancy&quot;, &quot;after pregnancy&quot;),
+    
+    emergency_visits = fct_relevel(emergency_visits,
+                                  &quot;never&quot;,&quot;once&quot;,&quot;twice&quot;,&quot;thrice&quot;,&quot;4+ times&quot;),
+    
+    urgentcare_visits = fct_relevel(urgentcare_visits,
+                                   &quot;never&quot;,&quot;once&quot;,&quot;twice&quot;,&quot;thrice&quot;,&quot;4 times&quot;,&quot;5+ times&quot;),
+    
+    health = fct_relevel(health, &quot;poor&quot;, &quot;fair&quot;, &quot;good&quot;, &quot;very good&quot;, &quot;excellent&quot;),
+    
+    errands_alone_diff = fct_relevel(errands_alone_diff, &quot;none&quot;, &quot;some&quot;, &quot;a lot&quot;, &quot;cannot do at all&quot;)
+    
+    )</code></pre>
+<p>plots bebe</p>
+</div>
+<div id="basic-demographics" class="section level1">
+<h1>basic demographics</h1>
+<div id="looking-at-biological-sex-1" class="section level2">
+<h2>Looking at biological sex (1)</h2>
+<p>Starting off we can see that females are more likely to get a flu shot than not, this does not appear to be the same trend with men. Men are more likely to not receive a flu shot than to get one.</p>
+<p><strong>DONE</strong></p>
+<pre class="r"><code>sex_plot = 
+flu_adult_df %&gt;% 
+  filter(flu_shot != &quot;no response&quot;) %&gt;% 
+  filter(flu_shot != &quot;not applicable&quot;) %&gt;% 
+  filter(flu_shot != &quot;don&#39;t know&quot;) %&gt;% 
+  filter(sex != &quot;No response&quot;) %&gt;% 
+  mutate(flu_shot = fct_infreq(flu_shot)) %&gt;% 
+  ggplot(aes( x = flu_shot, fill = sex)) + geom_bar(position = &quot;dodge&quot;)  +
+  transition_layers(layer_length = 1,
+  transition_length = 1,
+  keep_layers = TRUE,
+  from_blank = TRUE,
+  layer_order = NULL,
+  layer_names = &quot;flu_shot&quot;) + enter_grow() + exit_shrink() + ease_aes(&#39;sine-in&#39;)  + 
+  labs(
+    title = &quot;Flu shot engagement amongst males and females&quot;,
+    x = &quot;Did you receive a flu shot, yes or no?&quot;,
+    y = &quot;Total Amount&quot;,
+    caption = &quot;Data from National Health Survey&quot;)</code></pre>
+</div>
+<div id="whos-most-at-risk-lets-think-about-vulnerable-groups-2" class="section level2">
+<h2>who’s most at risk? let’s think about vulnerable groups (2)</h2>
+<p>We know that the most vulnerable groups are those that are older and who have a BMI that is not consider healthy. Let’s consider those who did not receive a flu shot vs those who did.</p>
+<p><strong>DONE</strong></p>
+<pre class="r"><code>age_plot = 
+flu_adult_df %&gt;% 
+  filter(flu_shot != &quot;not applicable&quot;) %&gt;%
+  filter(flu_shot != &quot;don&#39;t know&quot;) %&gt;%
+  filter(flu_shot != &quot;no response&quot;) %&gt;%
+ filter(age &gt; 65) %&gt;%
+  filter(bmi != &quot;unknown&quot;) %&gt;% 
+  ggplot(aes(x = bmi, fill = flu_shot )) + geom_bar(position = &quot;dodge&quot;) + 
+  labs(
+    title = &quot;Flu shot engagement by BMI for 65+&quot;,
+    x = &quot;BMI&quot;,
+    y = &quot;Total Amount&quot;,
+    caption = &quot;Data from National Health Survey&quot;)  +
+  transition_layers(layer_length = 1,
+  transition_length = 1,
+  keep_layers = TRUE,
+  from_blank = TRUE,
+  layer_order = NULL,
+  layer_names = &quot;bmi&quot;) + enter_grow() + exit_shrink() + ease_aes(&#39;sine-in&#39;) </code></pre>
+</div>
+<div id="when-are-flu-shots-occurring-and-insurance-type-3" class="section level2">
+<h2>when are flu shots occurring? and insurance type (3)</h2>
+<p>Let’s look at insurance in relation to flu shots. Most of those receiving a flu shot are covered under private insurance. Shots typically occur in October, with November close behind.</p>
+<p><strong>DONE</strong></p>
+<pre class="r"><code>coverage_plot = 
+flu_adult_df %&gt;% 
+  filter(flu_shot_month != &quot;No response&quot;) %&gt;% 
+  filter(flu_shot_month != &quot;Not applicable&quot;) %&gt;% 
+  filter(flu_shot_month != &quot;Don&#39;t know&quot;) %&gt;% 
+  filter(coverage != &quot;don&#39;t know&quot;) %&gt;%
+  filter(coverage != &quot;NA&quot;) %&gt;% 
+  mutate(coverage = fct_infreq(coverage)) %&gt;% 
+  ggplot(aes(y = coverage, x = flu_shot_month, color = coverage, alpha = .04)) + geom_jitter() + 
+  labs(
+    title = &quot;When did you get a flu shot, did insurance influence this decision?&quot;,
+    x = &quot;Month&quot;,
+    y = &quot;Insurance Coverage&quot;,
+    caption = &quot;Data from National Health Survey&quot;) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + transition_states(
+   flu_shot_month,transition_length = 2, state_length = 1) + enter_grow() + exit_shrink() + ease_aes(&#39;sine-in-out&#39;)</code></pre>
+</div>
+<div id="money-and-bills-4" class="section level2">
+<h2>money and bills (4)</h2>
+<p>for those who didn’t receive a flu shot, most respondents did not have difficulty paying their hospital bill.</p>
+<p><strong>DONE</strong></p>
+<pre class="r"><code>doctor_plot = 
+flu_adult_df %&gt;% 
+   filter(flu_shot == &quot;no&quot;) %&gt;%
+    filter(probs_paybill != &quot;Don&#39;t know&quot;) %&gt;% 
+  filter(probs_paybill != &quot;No response&quot;) %&gt;%
+   filter(last_drvisit != &quot;don&#39;t know&quot;) %&gt;% 
+  filter(last_drvisit != &quot;refused&quot;) %&gt;%
+  ggplot(aes(fill = probs_paybill, y = last_drvisit)) + geom_bar() + 
+  labs(
+    title = &quot;No flu shot? When was the last time you went to a healthcare provider and did you have difficulty paying your bill?&quot;,
+    x = &quot;Total Amount&quot;,
+    y = &quot;When did you see them?&quot;,
+    caption = &quot;Data from National Health Survey&quot;) </code></pre>
+</div>
+<div id="age-distribution-for-getting-a-shot-based-on-education-5" class="section level2">
+<h2>Age distribution for getting a shot based on education (5)</h2>
+<p><strong>done</strong></p>
+<pre class="r"><code>yes_age_plot = 
+flu_adult_df %&gt;% 
+  filter(flu_shot == &quot;yes&quot;) %&gt;% 
+  filter(age &gt; 17) %&gt;% 
+plot_ly(y = ~age, color = ~education, type = &quot;box&quot;, colors = &quot;viridis&quot;) </code></pre>
+<pre class="r"><code>no_age_plot = 
+flu_adult_df %&gt;% 
+  filter(flu_shot == &quot;no&quot;) %&gt;% 
+  filter(age &gt; 17) %&gt;% 
+plot_ly(y = ~age, color = ~education, type = &quot;box&quot;, colors = &quot;viridis&quot;) </code></pre>
+<p>Seems like people are generally older when they receive a flu vaccine.</p>
+</div>
+<div id="plot-for-pregnant-people-and-flu-shots-67" class="section level2">
+<h2>plot for pregnant people and flu shots (6/7)</h2>
+<p><strong>DONE</strong> How many people are pregnant? and if they are, did they receive a flu shot at all during that year? What factors contribute to women deciding to receive a flu shot?</p>
+<pre class="r"><code>pregnant_plot = 
+flu_adult_df %&gt;%
+  filter(pregnant == &quot;yes&quot;) %&gt;% 
+  filter(flu_shot != &quot;not applicable&quot;) %&gt;% 
+  mutate(coverage = fct_infreq(coverage)) %&gt;% 
+  ggplot(aes(x = coverage, fill = flu_shot)) + geom_bar(position = &quot;dodge&quot;)  + 
+  labs(
+    title = &quot;For pregnant persons, did you get a flu shot, did insurance infulence this?&quot;,
+    x = &quot;Insurance Coverage&quot;,
+    y = &quot;Total Amount&quot;,
+    caption = &quot;Data from National Health Survey&quot;)  +
+  transition_layers(layer_length = 1,
+  transition_length = 1,
+  keep_layers = TRUE,
+  from_blank = TRUE,
+  layer_order = NULL,
+  layer_names = &quot;coverage&quot;) + enter_grow() + exit_shrink() + ease_aes(&#39;sine-in&#39;)  </code></pre>
+<p>The majority of those who are pregnant receive their flu shot after pregnancy. This makes sense considering restricting of who can receive the vaccination.</p>
+<p><strong>DONE</strong></p>
+<pre class="r"><code>pregnant2_plot = 
+flu_adult_df %&gt;% 
+   filter(flushot_preg != &quot;NA&quot;) %&gt;% 
+  filter(flushot_preg != &quot;no response&quot;) %&gt;%
+  filter(flushot_preg != &quot;don&#39;t know&quot;) %&gt;%
+  ggplot(aes(x = flushot_preg, fill = flushot_preg, alpha = .5)) + geom_density()  + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1))  + 
+  labs(
+    title = &quot;For pregnant persons, if you got a flu shot, when did this occur?&quot;,
+    x = &quot;Timing in relation to pregnancy&quot;,
+    y = &quot;Density&quot;,
+    caption = &quot;Data from National Health Survey&quot;)</code></pre>
+</div>
+<div id="plot-for-emergency-care-and-urgent-care-visits-89" class="section level2">
+<h2>plot for emergency care and urgent care visits (8/9)</h2>
+<p>emergency care</p>
+<p><strong>looks okay</strong></p>
+<pre class="r"><code>emergency_plot = 
+flu_adult_df %&gt;% 
+    filter(flu_shot != &quot;not applicable&quot;) %&gt;%
+  filter(flu_shot != &quot;don&#39;t know&quot;) %&gt;%
+  filter(flu_shot != &quot;no response&quot;) %&gt;%
+  filter(emergency_visits != &quot;don&#39;t know&quot;) %&gt;%
+  filter(emergency_visits != &quot;not applicable&quot;) %&gt;%
+  filter(emergency_visits != &quot;refused&quot;) %&gt;%
+  ggplot(aes(x = emergency_visits,  fill = flu_shot)) + geom_bar(position = &quot;dodge&quot;) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(
+    title = &quot;Did you visit an emergency room, and what was your flu vaccine status?&quot;,
+    x = &quot;How many times did you visit&quot;,
+    y = &quot;Total Amount&quot;,
+    caption = &quot;Data from National Health Survey&quot;)  +
+  transition_layers(layer_length = 1,
+  transition_length = 1,
+  keep_layers = TRUE,
+  from_blank = TRUE,
+  layer_order = NULL,
+  layer_names = &quot;emergency_visits&quot;) + enter_grow() + exit_shrink() + ease_aes(&#39;sine-in&#39;)  </code></pre>
+<pre class="r"><code>emergency_plot</code></pre>
+<p><img src="national_health_survey_files/figure-html/unnamed-chunk-22-1.gif" width="90%" /></p>
+<p>urgent care</p>
+<p><strong>looks good</strong></p>
+<pre class="r"><code>urgent_plot = 
+flu_adult_df %&gt;% 
+    filter(flu_shot != &quot;not applicable&quot;) %&gt;%
+  filter(flu_shot != &quot;don&#39;t know&quot;) %&gt;%
+  filter(flu_shot != &quot;no response&quot;) %&gt;%
+  filter(urgentcare_visits != &quot;don&#39;t know&quot;) %&gt;%
+  filter(urgentcare_visits != &quot;not applicable&quot;) %&gt;%
+  filter(urgentcare_visits != &quot;refused&quot;) %&gt;%
+  ggplot(aes(x = urgentcare_visits,  fill = flu_shot)) + geom_bar(position = &quot;dodge&quot;) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(
+    title = &quot;Did you visit an urgent care, and what was your flu vaccine status?&quot;,
+    x = &quot;How many times did you visit&quot;,
+    y = &quot;Total Amount&quot;,
+    caption = &quot;Data from National Health Survey&quot;)  +
+  transition_layers(layer_length = 1,
+  transition_length = 1,
+  keep_layers = TRUE,
+  from_blank = TRUE,
+  layer_order = NULL,
+  layer_names = &quot;urgentcare_visits&quot;) + enter_grow() + exit_shrink() + ease_aes(&#39;sine-in&#39;)</code></pre>
+<pre class="r"><code>urgent_plot</code></pre>
+<p><img src="national_health_survey_files/figure-html/unnamed-chunk-24-1.gif" width="90%" /></p>
+</div>
+<div id="general-health-separted-on-race-10" class="section level2">
+<h2>general health, separted on race (10)</h2>
+<p>when we look at covid rates, we notice that black and brown communities are disproportionately affected by infection. Let’s look at this for Hispanic groups in regards to flu and health</p>
+<p><strong>want to make this more readable</strong></p>
+<p>?dodge for density??? ridge plot… <strong>ARGH WHAT IS THIS</strong> `</p>
+</div>
+<div id="disabilitiies-babes-11" class="section level2">
+<h2>disabilitiies babes (11)</h2>
+<p><strong>factor reorder for both variables</strong></p>
+<p>for those with a disability, who got a flu shot? and where are they going for their services? how much difficulty are they having with completing errands on their own?</p>
+<pre class="r"><code>disability_plot = 
+flu_adult_df %&gt;% 
+  filter(disability == &quot;yes&quot;) %&gt;% 
+  filter(flu_shot != &quot;don&#39;t know&quot;) %&gt;% 
+  filter(flu_shot != &quot;no response&quot;) %&gt;% 
+  filter(flu_shot != &quot;not applicable&quot;) %&gt;% 
+  filter(errands_alone_diff != &quot;no response&quot;) %&gt;% 
+  filter(errands_alone_diff != &quot;don&#39;t know&quot;) %&gt;%
+  ggplot(aes(x = errands_alone_diff, fill = flu_shot)) + geom_bar(position = &quot;dodge&quot;) + theme(axis.text.x = element_text(angle = 90, vjust = 0.5, hjust=1)) + labs(
+    title = &quot;For persons with disabilities, did you have diffculty completing errands on your own, and what was your flu vaccine status?&quot;,
+    x = &quot;How much difficulty?&quot;,
+    y = &quot;Total Amount&quot;,
+    caption = &quot;Data from National Health Survey&quot;)  +
+  transition_layers(layer_length = 1,
+  transition_length = 1,
+  keep_layers = TRUE,
+  from_blank = TRUE,
+  layer_order = NULL,
+  layer_names = &quot;urgentcare_visits&quot;) + enter_grow() + exit_shrink() + ease_aes(&#39;sine-in&#39;)</code></pre>
+</div>
+</div>
+
+
+
+
+</div>
+
+<script>
+
+// add bootstrap table styles to pandoc tables
+function bootstrapStylePandocTables() {
+  $('tr.header').parent('thead').parent('table').addClass('table table-condensed');
+}
+$(document).ready(function () {
+  bootstrapStylePandocTables();
+});
+
+
+</script>
+
+<!-- tabsets -->
+
+<script>
+$(document).ready(function () {
+  window.buildTabsets("TOC");
+});
+
+$(document).ready(function () {
+  $('.tabset-dropdown > .nav-tabs > li').click(function () {
+    $(this).parent().toggleClass('nav-tabs-open')
+  });
+});
+</script>
+
+<!-- code folding -->
+
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src  = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML";
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+
+</body>
+</html>
