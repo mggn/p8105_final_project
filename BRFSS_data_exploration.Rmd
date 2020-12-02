@@ -201,9 +201,10 @@ plot_midwest =
     pct = n_obs/sum(n_obs)
   )%>%
   filter(flushot_yn != "Don't know/not sure")%>%
-  filter(flushot_yn != "refused")%>%
+  filter(flushot_yn != "Refused")%>%
+  fct_reorder
   ggplot(aes(fill = flushot_yn, y = pct, x = state))+
-  geom_bar(position="dodge", stat = "identity")+
+  geom_bar(position="stack", stat = "identity")+
   ylim(0, 1.0)+
   theme_bw()+
   labs(
@@ -351,25 +352,26 @@ library(rvest)
 library(httr)
 library(rtweet)
 library(httpuv)
-#look at twitr
-
-url = "https://twitter.com/search?q=flu%20vaccines&src=typeahead_click"
-twitter_html = read_html(url)%>%
-  html_nodes(css = "table")
-
-tweets1 = search_tweets(q = "#Vaccine", 
-                        n = 18000,
-                        include_rts = FALSE,
-                        `-filter` = "replies",
-                        lang = "en")
+#look at twitr test
 
 
-tweets_df = 
-  search_tweets(q = "flu OR shot OR vaccine", 
-                        n = 18000,
-                        include_rts = FALSE,
-                        `-filter` = "replies",
-                        lang = "en") %>%
-  write_as_csv("./final_project_large_data/tweets_df.csv")
+# url = "https://twitter.com/search?q=flu%20vaccines&src=typeahead_click"
+# twitter_html = read_html(url)%>%
+#   html_nodes(css = "table")
+# 
+# tweets1 = search_tweets(q = "#Vaccine", 
+#                         n = 18000,
+#                         include_rts = FALSE,
+#                         `-filter` = "replies",
+#                         lang = "en")
+# 
+# 
+# tweets_df = 
+#   search_tweets(q = "flu OR shot OR vaccine", 
+#                         n = 18000,
+#                         include_rts = FALSE,
+#                         `-filter` = "replies",
+#                         lang = "en") %>%
+#   write_as_csv("./final_project_large_data/tweets_df.csv")
 
 ```
