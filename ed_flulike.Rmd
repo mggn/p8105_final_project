@@ -20,7 +20,7 @@ There are 4.2 million rows in the full dataset. Each extract_date repeats previo
 ```{r eval = FALSE}
 ed_flu = 
   GET("https://data.cityofnewyork.us/resource/2nwg-uqyg.csv",
-      query = list("$limit" = 4215249)) %>% 
+      query = list("$limit" = 4777922)) %>% 
   content("parsed") 
 
 head(ed_flu)
@@ -36,7 +36,7 @@ ed_flu_tidy =
     pct_visits = ili_pne_visits / total_ed_visits,
     pct_adm = ili_pne_admissions / ili_pne_visits
   ) %>% 
-  filter(extract_date == "2020-11-19") %>% 
+  filter(extract_date == Sys.Date()) %>% 
   arrange(date, mod_zcta)
 ```
 
