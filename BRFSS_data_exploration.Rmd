@@ -202,8 +202,9 @@ plot_midwest =
   )%>%
   filter(flushot_yn != "Don't know/not sure")%>%
   filter(flushot_yn != "Refused")%>%
+  fct_reorder
   ggplot(aes(fill = flushot_yn, y = pct, x = state))+
-  geom_bar(position="dodge", stat = "identity")+
+  geom_bar(position="stack", stat = "identity")+
   ylim(0, 1.0)+
   theme_bw()+
   labs(
