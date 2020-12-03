@@ -352,6 +352,7 @@ library(rvest)
 library(httr)
 library(rtweet)
 library(httpuv)
+library(ggplot2)
 #look at twitr test
 
 
@@ -359,19 +360,27 @@ library(httpuv)
 # twitter_html = read_html(url)%>%
 #   html_nodes(css = "table")
 # 
-# tweets1 = search_tweets(q = "#Vaccine", 
-#                         n = 18000,
-#                         include_rts = FALSE,
-#                         `-filter` = "replies",
-#                         lang = "en")
-# 
-# 
-# tweets_df = 
-#   search_tweets(q = "flu OR shot OR vaccine", 
-#                         n = 18000,
-#                         include_rts = FALSE,
-#                         `-filter` = "replies",
-#                         lang = "en") %>%
-#   write_as_csv("./final_project_large_data/tweets_df.csv")
+
+tweets1 = search_tweets(q = "#vaccine",
+                        n = 18000,
+                        include_rts = FALSE,
+                        `-filter` = "replies",
+                        lang = "en")
+
+ts_plot(tweets1, "weeks") +
+  labs(x = NULL, y = NULL,
+       title = "Frequency of tweets mentioning #vaccine",
+       subtitle = paste0(format(min(tweets1$created_at), "%d %B %Y"), " to ", format(max(tweets1$created_at),"%d %B %Y")),
+       caption = "Data collected from Twitter's REST API via rtweet") +
+  theme_minimal()
+
+
+tweets_df2 =
+  search_tweets(q = "flu OR vaccine OR flushot",
+                        n = 5000,
+                        include_rts = FALSE,
+                        `-filter` = "replies",
+                        lang = "en") %>%
+  write_as_csv("./final_project_large_data/tweets_df2.csv")
 
 ```
